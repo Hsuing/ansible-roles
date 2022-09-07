@@ -28,7 +28,7 @@ github地址： https://github.com/Supervisor/supervisor
 ```yaml
 ---
 # pip 国内源
-supervisor_package_index: https://pypi.tuna.tsinghua.edu.cn/simple
+supervisor_package_index: https://mirrors.aliyun.com/simple
 
 # supervisor版本, 默认是最新版本
 supervisor_version: null
