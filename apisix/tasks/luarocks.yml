@@ -1,0 +1,29 @@
+- name: install | Check if luarocks local file is already configured.
+  stat: path={{ luarocks_file_path }}
+  connection: local
+  register: luarocks_file_result
+
+- name: install | Download luarocks file.
+  get_url: url={{ luarocks_file_url }} dest={{ software_files_path }}
+  connection: local
+  when: not luarocks_file_result.stat.exists
+
+
+- name: install | Confirm the existence of the installation directory.
+  file: path={{ software_install_path }} state=directory
+
+- name: install | Copy luarocks-3.8.0_src file to agent.
+  unarchive:
+    src: "{{ luarocks_file_path }}"
+    dest: "/tmp"
+    creates: "/tmp/luarocks-3.8.0"
+
+- name: install | copy luarock.sh file to agent.
+  template:
+    src: luarocks.sh.j2
+    dest: /tmp/luarocks.sh
+
+- name: Build an install luarocks.
+  shell: "sh luarocks.sh"
+  args:
+    chdir: "/tmp"

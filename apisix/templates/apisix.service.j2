@@ -1,0 +1,15 @@
+[Unit]
+Description=apisix
+Conflicts=apisix.service
+After=network-online.target
+
+[Service]
+Type=forking
+WorkingDirectory=/data/apps/apisix2.15
+ExecStart=/data/apps/apisix2.15/bin/apisix start
+ExecStop=/data/apps/apisix2.15/bin/apisix stop
+ExecReload=/data/apps/apisix2.15/bin/apisix reload
+LimitNOFILE=65535
+
+[Install]
+WantedBy=multi-user.target

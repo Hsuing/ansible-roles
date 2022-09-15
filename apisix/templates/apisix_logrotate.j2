@@ -1,0 +1,14 @@
+/data/apps/apisix2.15/logs/*.log {
+    daily
+        missingok
+        rotate 30
+        compress
+        delaycompress
+    dateext
+        notifempty
+    create root root
+        sharedscripts
+        postrotate
+                [ -f /data/apps/apisix2.15/logs/nginx.pid ] && kill -USR1 `cat /data/apps/apisix2.15/logs/nginx.pid`
+        endscript
+}

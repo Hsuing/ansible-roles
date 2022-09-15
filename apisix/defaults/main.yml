@@ -1,0 +1,39 @@
+---
+# author: hanxiong
+
+software_files_path: "/opt/software/apisix"
+software_install_path: "/data/apps"
+
+apisix_dir: "apisix2.15"
+apisix_version: "2.15.0"
+
+apisix_file: "apache-apisix-{{ apisix_version }}-src.tgz"
+apisix_file_path: "{{ software_files_path }}/{{ apisix_file }}"
+apisix_file_url: "https://dlcdn.apache.org/apisix/{{ apisix_version }}/apache-apisix-{{ apisix_version }}-src.tgz"
+
+
+luarocks_version: "v3.8.0"
+luarocks_file: "{{ luarocks_version }}.tar.gz"
+#luarocks_file_old: "v{{ luarocks_version }}.tar.gz"
+luarocks_file_path: "{{ software_files_path }}/{{ luarocks_file }}"
+luarocks_file_url: "https://github.com/luarocks/luarocks/archive/{{ luarocks_file }}"
+
+jemlloc_url: "https://github.com/jemalloc/jemalloc/releases/download/5.2.0/jemalloc-5.2.0.tar.bz2"
+jemlloc_name: "jemalloc-5.2.0.tar.bz2"
+jemlloc_name_path: "{{ software_files_path}}/{{ jemlloc_name }}"
+jemlloc_software_files_name: "jemalloc-5.2.0.tar.bz2"
+
+Lua21FileUrl: "https://github.com/openresty/luajit2/archive/v2.1-agentzh.zip"
+lua21filename: "luajit2-2.1-agentzh.zip"
+
+
+lua_nginx_file_path: "{{ software_files_path }}/{{ lua_nginx_file_name }}"
+ngx_devel_kit_file_path: "{{ software_files_path }}/{{ ngx_devel_kit_file_name }}"
+
+lua21filepath: "{{ software_files_path }}/{{ lua21filename }}"
+
+jemlloc_build_options: ''
+jemlloc_configure_command: >
+  ./configure
+  {{ jemlloc_build_options }}
+

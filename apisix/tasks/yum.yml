@@ -1,0 +1,38 @@
+- name: configure |  yum-config-manager.
+  package:
+    name: "{{ item }}"
+    state: installed
+  with_items:
+    - yum-utils
+
+- name: configure |  openresty.repo.
+  shell: "yum-config-manager --add-repo https://openresty.org/package/amazon/openresty.repo"
+  #shell: "yum-config-manager --add-repo https://openresty.org/package/centos/openresty.repo"
+
+- name: install | Ensure gcc packages are installed.
+  package:
+    name: "{{ item }}"
+    state: installed
+  with_items:
+    - curl
+    - curl-devel
+    - openresty
+    - git
+    - gcc
+    - openresty-openssl111-devel
+    - unzip
+    - bzip2
+    - pcre-devel
+    - pcre
+    - openldap-devel
+  ignore_errors: yes
+
+
+- name: configure |  /etc/security/limits.
+  shell: "echo '* soft nofile 204800' >>/etc/security/limits.conf"
+- name: configure |  /etc/security/limits.
+  shell: "echo '* hard nofile 204800' >>/etc/security/limits.conf"
+- name: configure |  /etc/security/limits.
+  shell: "echo '* soft nproc  204800' >>/etc/security/limits.conf"
+- name: configure |  /etc/security/limits.
+  shell: "echo '* hard nofile 204800' >>/etc/security/limits.conf"

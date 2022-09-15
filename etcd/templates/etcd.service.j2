@@ -1,0 +1,19 @@
+[Unit]
+Description=Etcd Server
+After=network.target
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=notify
+WorkingDirectory={{ etcd_datadir }}
+User={{ etcd_user }}
+TimeoutStartSec=10
+EnvironmentFile=-/data/etcd_data/2379/conf/etcd.conf
+ExecStart=/usr/local/etcd/etcd
+Restart=on-failure
+RestartSec=10s
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target

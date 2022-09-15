@@ -1,0 +1,8 @@
+---
+# author: hanxiong
+
+- import_tasks: yum.yml
+- import_tasks: lua21.yml
+- import_tasks: jemlloc.yml
+- import_tasks: luarocks.yml
+- import_tasks: apisix_install.yml
