@@ -3,6 +3,9 @@
   connection: local
   register: apisix_file_result
 
+- name: install | Create apisix user.
+  user: name={{ apisix_user }} group={{ apisix_group }} shell=/sbin/nologin createhome=no
+
 - name: install | Download apisix file.
   get_url: url={{ apisix_file_url }} dest={{ software_files_path }}
   connection: local
