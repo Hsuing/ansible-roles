@@ -1,0 +1,47 @@
+---
+# author: hanxiong
+
+- name: install | Create software directory.
+  file: path={{ software_files_path }} state=directory
+  connection: local
+
+
+#- name: install | Download jemlloc file.
+#  get_url: url={{ jemlloc_url }} dest={{ software_files_path }} validate_certs=no
+
+- name: install | Copy echo file to agent.
+  unarchive:
+    src: "{{ software_files_path }}/{{ echo_software_files_name }}"
+    dest: "/data/apps/nginx/party_modules"
+    creates: "{{ party_modules_files_path }}/echo-nginx-module"
+
+- name: install | Copy jemlloc file to agent.
+  unarchive:
+    src: "{{ software_files_path }}/{{ jemlloc_software_files_name }}"
+    dest: "/usr/local/src/"
+
+- name: install | Build an install src/jemlloc.
+  shell: "{{ item }}"
+  with_items:
+    - "{{ jemlloc_configure_command }}"
+    - make && make install
+  args:
+    chdir: "/usr/local/src/jemalloc-5.1.0"
+
+- name: echo ldconfig_name to /etc/ld.so.conf.d/local.conf
+  raw: "echo '/usr/local/lib' > /etc/ld.so.conf.d/local.conf;ldconfig"
+
+- name: install | Copy ngx_bri file to agent.
+  unarchive:
+    src: "{{ software_files_path }}/{{ bro_name }}"
+    dest: "/usr/local/src/"
+
+#- name: install | Copy ngx_devel_kit file to agent.
+#  unarchive:
+#    src: "{{ software_files_path }}/{{ ngx_devel_kit_name }}"
+#    dest: "/usr/local/src/"
+
+#- name: install | Copy lua-nginx-module file to agent.
+#  unarchive:
+#    src: "{{ software_files_path }}/{{ lua_nginx_module_name }}"
+#    dest: "/usr/local/src/"

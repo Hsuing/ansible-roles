@@ -1,0 +1,3 @@
+- hosts: yidu
+  roles:
+  - { role: ngx_waf }

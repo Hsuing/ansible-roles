@@ -1,0 +1,59 @@
+---
+# author: hanxiong
+
+- name: install | Check if tengine local file is already configured.
+  stat: path={{ nginx_file_path }}
+  connection: local
+  register: jemlloc_file_result
+
+- name: install | Download {{ nginx_file_url }} file.
+  get_url: url={{ nginx_file_url }} dest={{ software_files_path }} validate_certs=false
+  connection: local
+  when: not jemlloc_file_result.stat.exists
+
+- name: install | Copy nginx file to agent.
+  unarchive:
+    src: "{{ nginx_file_path }}"
+    dest: "/tmp"
+    creates: "/tmp/tengine-{{ nginx_version }}"
+- name: install | create {{ party_modules_files_path }} path
+  shell: "cp -r {{ item }} {{ party_modules_files_path }}/"
+  with_items:
+    - ngx_http_concat_module
+    - ngx_http_footer_filter_module
+    - ngx_http_trim_filter_module
+    - ngx_http_upstream_check_module
+    - ngx_http_upstream_keepalive_module
+    - ngx_http_upstream_vnswrr_module
+    - ngx_http_upstream_consistent_hash_module
+    - ngx_http_upstream_dynamic_module
+    - ngx_http_upstream_dyups_module
+    - ngx_http_upstream_session_sticky_module
+    - ngx_http_user_agent_module
+    - ngx_multi_upstream_module
+    - mod_dubbo
+    - ngx_http_lua_module
+    - ngx_http_proxy_connect_module
+    - ngx_http_reqstat_module
+    - ngx_slab_stat
+    - ngx_backtrace_module
+  args:
+    chdir: "/tmp/tengine-{{ nginx_version }}/modules"
+
+- name: install | Copy echo file to agent.
+  unarchive:
+    src: "{{ software_files_path }}/{{ echo_software_files_name }}"
+    dest: "/data/apps/nginx/party_modules"
+    creates: "{{ party_modules_files_path }}/echo-nginx-module"
+
+- name: install | Copy ngx_http_geoip2_module file to agent.
+  unarchive:
+    src: "{{ software_files_path }}/{{ ngx_http_geoip2_module_name }}"
+    dest: "/data/apps/nginx/party_modules"
+    creates: "{{ party_modules_files_path }}/ngx_http_geoip2_module"
+
+- name: install | Copy nginx_vts file to agent.
+  unarchive:
+    src: "{{ software_files_path }}/{{ ngx_vts_module_name }}"
+    dest: "/data/apps/nginx/party_modules"
+    creates: "{{ party_modules_files_path }}/ngx_vts_module"

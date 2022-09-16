@@ -1,0 +1,39 @@
+- name: install | Ensure gcc packages are installed.
+  package:
+    name: "{{ item }}"
+    state: installed
+  with_items:
+    - unzip
+    - gcc
+    - gcc-c++
+    - libtool
+    - make
+    - libtool
+    - zlib
+    - zlib-devel
+    - openssl
+    - openssl-devel
+    - pcre
+    - pcre-devel
+    - bzip2
+    - perl
+    - curl
+    - curl-devel
+    - expat-devel
+    - gettext-devel
+    - libxml2
+    - libxml2-devel
+    - libjpeg-devel
+    - libpng-devel
+    - freetype-devel
+    - autoconf
+    - bzip2
+    - geoip-devel
+    - libmaxminddb-devel
+    - libGL
+    - libXi
+    - libunwind
+    - gperftools
+    - flex
+    - bison
+  ignore_errors: yes

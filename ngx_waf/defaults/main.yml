@@ -1,0 +1,293 @@
+---
+# author: hanxiong
+jemlloc_build_options: ''
+jemlloc_configure_command: >
+  ./configure
+  {{ jemlloc_build_options }}
+
+libmaxminddb_build_options: ''
+libmaxminddb_configure_command: >
+ ./configure
+ {{ libmaxminddb_build_options }}
+
+
+echo_software_files_name: "echo-nginx-module.tar.gz"
+
+ngx_http_upstream_dynamic_module_name: "ngx_http_upstream_dynamic_module.tar.gz"
+ngx_http_geoip2_module_name: "ngx_http_geoip2_module.zip"
+
+ngx_vts_module_name: "nginx_vts.tar.gz"
+
+
+libmaxminddb_name: "libmaxminddb-1.3.2.tar.gz"
+maxmind_city_name: "maxmind-city.mmdb.tar.gz"
+
+tcp_proxy_name: "nginx_tcp_proxy_module.tar.gz"
+
+ngx_http_upstream_vnswrr_module_name: "ngx_http_upstream_vnswrr_module.tar.gz"
+
+jemlloc_url: "https://github.com/jemalloc/jemalloc/releases/download/5.2.0/jemalloc-5.2.0.tar.bz2"
+jemlloc_name: "jemalloc-5.2.0.tar.bz2"
+jemlloc_name_path: "{{ software_files_path}}/{{ jemlloc_name }}"
+
+party_modules_files_path: "/data/apps/nginx/party_modules"
+
+jemlloc_software_files_name: "jemalloc-5.2.0.tar.bz2"
+bro_name: "ngx_brotli.tar.gz"
+#ngx_devel_kit_name: "v0.3.0.tar.gz"
+lua_nginx_module_name: "v0.10.14rc4.tar.gz"
+
+software_files_path: "/opt/software"
+software_install_path: "/data/apps"
+
+nginx_version: "2.3.2"
+
+nginx_file: "tengine-{{ nginx_version }}.tar.gz"
+nginx_file_path: "{{ software_files_path }}/{{ nginx_file }}"
+nginx_file_url: "http://tengine.taobao.org/download/tengine-{{ nginx_version }}.tar.gz"
+
+nginx_module_vts_url: "https://codeload.github.com/vozlt/nginx-module-vts/zip/master"
+
+nginx_module_upsync_url: "https://github.com/weibocom/nginx-upsync-module"
+
+#lua
+lua_nginx_file_url: "https://github.com/openresty/lua-nginx-module/archive/v0.10.14rc4.tar.gz"
+lua_nginx_file_name: "lua-nginx-module-0.10.14rc4.tar.gz"
+
+ngx_devel_kit_file_url: "https://github.com/simpl/ngx_devel_kit/archive/v0.3.0.zip"
+ngx_devel_kit_file_name: "ngx_devel_kit-0.3.0.zip"
+
+Lua21FileUrl: "https://github.com/openresty/luajit2/archive/v2.1-agentzh.zip"
+lua21filename: "luajit2-2.1-agentzh.zip"
+
+pureFileUrl: "http://labs.frickle.com/files/ngx_cache_purge-2.3.tar.gz"
+purefilename: "ngx_cache_purge-2.3.tar.gz"
+pure_nginx_file_path: "{{ software_files_path }}/{{ purefilename }}"
+
+lua_nginx_file_path: "{{ software_files_path }}/{{ lua_nginx_file_name }}"
+ngx_devel_kit_file_path: "{{ software_files_path }}/{{ ngx_devel_kit_file_name }}"
+
+lua21filepath: "{{ software_files_path }}/{{ lua21filename }}"
+
+curlFileUrl: "https://curl.se/download/curl-7.78.0.tar.gz"
+curlfilename: "curl-7.78.0.tar.gz"
+curlfilepath: "{{ software_files_path }}/{{ curlfilename }}"
+
+WAFfilename: "ngx_waf-8.0.3.tar.gz"
+uthashfilename: "uthash.tar.gz"
+libsodiumfilename: "libsodium-src.tar.gz"
+
+openssl_build_options: ''
+openssl_configure_command: >
+  ./config --prefix=/data/apps/nginx/party_modules/openssl-1.1.1a/.openssl
+  {{ openssl_build_options }}
+
+
+openssl_url: "https://www.openssl.org/source/openssl-1.1.1a.tar.gz"
+openssl_name: "openssl-1.1.1a.tar.gz"
+openssl_name_path: "{{ software_files_path}}/{{ openssl_name }}"
+
+curl_build_options: ''
+curl_configure_command: >
+  ./configure --without-ssl --prefix=/usr/local/src/curl/build
+  {{ curl_build_options }}
+
+libsodium_build_options: ''
+libsodium_configure_command: >
+  ./configure --prefix=/usr/local/src/libsodium-build --with-pic
+  {{ libsodium_build_options }}
+
+nginx_temp_path: "/var/tmp/nginx"
+nginx_conf_path: "{{ software_install_path }}/nginx/conf/"
+nginx_conf_file_path: "{{ software_install_path }}/nginx/conf/nginx.conf"
+
+nginx_modules_name: "nginx-module-vts-master.zip"
+nginx_modules_file: "{{ software_files_path }}/{{ nginx_modules_name }}"
+
+nginx_modules_gen_path: "/data/apps/nginx_modules"
+nginx_modules_vts_path: "/data/apps/nginx_modules/nginx-module-vts-master"
+
+#upstream moudles
+nginx_modules_upsync_name: "nginx-upsync-module"
+nginx_modules_upsync_path: "/data/apps/nginx_modules"
+
+OPENSSL_ROOT: "/data/apps/nginx/party_modules/openssl-1.1.1a"
+OPENSSL_LIB: "{{ OPENSSL_ROOT }}/.openssl"
+
+#--with-google_perftools_module
+
+nginx_user: 'nginx'
+nginx_group: 'nginx'
+nginx_build_options: ''
+nginx_configure_command: >
+  ./configure
+  --prefix={{ software_install_path }}/nginx
+  --user={{ nginx_user }}
+  --group={{ nginx_group }}
+  --http-client-body-temp-path={{ nginx_temp_path }}/client/
+  --http-proxy-temp-path={{ nginx_temp_path }}/proxy/
+  --http-fastcgi-temp-path={{ nginx_temp_path }}/fcgi/
+  --http-uwsgi-temp-path={{ nginx_temp_path }}/uwsgi
+  --http-scgi-temp-path={{ nginx_temp_path }}/scgi
+  --with-http_sub_module
+  --with-http_stub_status_module
+  --with-http_gzip_static_module
+  --with-http_realip_module
+  --with-http_gunzip_module
+  --with-http_gzip_static_module
+  --with-http_auth_request_module
+  --with-http_random_index_module
+  --with-http_secure_link_module
+  --with-http_degradation_module
+  --with-http_slice_module
+  --with-http_ssl_module
+  --with-http_v2_module
+  --with-http_realip_module
+  --with-http_addition_module
+  --with-http_lua_module
+  --with-http_ssl_module
+  --with-http_secure_link_module
+  --with-select_module
+  --without-select_module
+  --with-poll_module
+  --without-poll_module
+  --without-procs
+  --with-threads
+  --with-file-aio
+  --with-pcre
+  --with-threads
+  --with-ipv6
+  --with-http_mp4_module
+  --with-http_flv_module
+  --with-jemalloc
+  --with-stream 
+  --with-stream_ssl_module
+  --with-stream_realip_module
+  --with-stream_ssl_preread_module
+  --with-stream_sni
+  --with-cc-opt='-std=gnu99'
+  --without-http_upstream_keepalive_module
+  --with-openssl="{{OPENSSL_ROOT}}"
+  --add-module={{ party_modules_files_path }}/ngx_brotli
+  --add-module={{ party_modules_files_path }}/ngx_http_concat_module
+  --add-module={{ party_modules_files_path }}/ngx_http_trim_filter_module
+  --add-module={{ party_modules_files_path }}/ngx_http_footer_filter_module
+  --add-module={{ party_modules_files_path }}/ngx_http_upstream_check_module
+  --add-module={{ party_modules_files_path }}/ngx_http_upstream_dynamic_module
+  --add-module={{ party_modules_files_path }}/ngx_http_upstream_vnswrr_module
+  --add-module={{ party_modules_files_path }}/ngx_http_upstream_dyups_module
+  --add-module={{ party_modules_files_path }}/ngx_http_upstream_keepalive_module
+  --add-module={{ party_modules_files_path }}/ngx_http_upstream_session_sticky_module
+  --add-module={{ party_modules_files_path }}/ngx_http_upstream_consistent_hash_module
+  --add-module={{ party_modules_files_path }}/ngx_http_user_agent_module
+  --add-module={{ party_modules_files_path }}/ngx_multi_upstream_module
+  --add-module={{ party_modules_files_path }}/ngx_backtrace_module
+  --add-module={{ party_modules_files_path }}/ngx_slab_stat
+  --add-module={{ party_modules_files_path }}/ngx_cache_purge-2.3
+  --add-module={{ party_modules_files_path }}/echo-nginx-module
+  --add-module={{ party_modules_files_path }}/ngx_http_geoip2_module-master 
+  --add-module={{ party_modules_files_path }}/nginx-module-vts-0.1.18
+  --add-module={{ party_modules_files_path }}/ngx_waf-8.0.3
+  --with-debug
+  {{ nginx_build_options }}
+
+  #--add-module={{ party_modules_files_path }}/mod_dubbo
+#--with-http_geoip_module 
+#
+nginx_pidfile: '/var/run/nginx.pid'
+nginx_worker_processes: "{{ ansible_processor_vcpus | default(ansible_processor_count) }}"
+nginx_worker_connections: "65535"
+nginx_multi_accept: "on"
+nginx_pid_file: "/var/run/nginx.pid"
+
+nginx_logpath: "/var/log/nginx"
+nginx_error_log: "{{ nginx_logpath }}/error.log"
+nginx_access_log: "{{ nginx_logpath }}/access.log"
+nginx_mime_file_path: "mime.types"
+
+nginx_sendfile: "on"
+nginx_tcp_nopush: "on"
+nginx_tcp_nodelay: "on"
+
+nginx_keepalive_timeout: "75s"
+nginx_keepalive_requests: "10000"
+
+nginx_client_max_body_size: "64m"
+
+nginx_server_names_hash_bucket_size: "128"
+nginx_server_names_hash_max_size: "512"
+
+nginx_proxy_cache_path: ""
+
+nginx_worker_rlimit_nofile: "65535"
+
+nginx_epoll: "epoll"
+
+nginx_server_tokens: "off"
+
+nginx_extra_conf_options: ""
+# Example extra main options, used within the main nginx's context:
+#   nginx_extra_conf_options: |
+#     env VARIABLE;
+#     include /etc/nginx/main.d/*.conf;
+
+nginx_extra_http_options: ""
+# Example extra http options, printed inside the main server http config:
+#    nginx_extra_http_options: |
+#      proxy_buffering    off;
+#      proxy_set_header   X-Real-IP $remote_addr;
+#      proxy_set_header   X-Scheme $scheme;
+#      proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;
+#      proxy_set_header   Host $http_host;
+
+nginx_remove_default_vhost: false
+nginx_vhosts: []
+# Example vhost below, showing all available options:
+# - listen: "80 default_server" # default: "80 default_server"
+#   server_name: "example.com" # default: N/A
+#   root: "/var/www/example.com" # default: N/A
+#   index: "index.html index.htm" # default: "index.html index.htm"
+#
+#   # Properties that are only added if defined:
+#   error_page: ""
+#   access_log: ""
+#   error_log: ""
+#   extra_parameters: "" # Can be used to add extra config blocks (multiline).
+
+nginx_upstreams: ''
+# - name: myapp1
+#   strategy: "ip_hash" # "least_conn", etc.
+#   keepalive: 16 # optional
+#   servers: {
+#     "srv1.example.com",
+#     "srv2.example.com weight=3",
+#     "srv3.example.com"
+#   }
+nginx_proxys: false
+nginx_gzip: false
+nginx_stub_status: false
+# - nginx_stub_status: true
+nginx_stream: false
+# - nginx_stream: true
+
+#domain
+nginx_listen: "80"
+
+domain_name: "bit"
+server_name_accountcenterapi: "accountcenterapi.{{ domain_name }}.com"
+server_name_accountsystemapi: "accountsystemapi.{{ domain_name }}.com"
+server_name_basiscinfo: "basiscinfo.{{ domain_name }}.com"
+server_name_marketapi: "marketapi.{{ domain_name }}.com"
+server_name_marketws: "marketws.{{ domain_name }}.com"
+server_name_demotradeapi: "demotradeapi.{{ domain_name }}.com"
+server_name_manageapi: "manageapi.{{ domain_name }}.com"
+server_name_manage: "manage.{{ domain_name }}.com"
+server_name_paycenter: "paycenter.{{ domain_name }}.com"
+
+server_name_tradeapi: "tradeapi.{{ domain_name }}.com"
+
+manage_data_path: "/data/ufun/operate_static"
+
+#ssl
+server_ssl_name_crt: "yiansto.com.crt"
+server_ssl_name_key: "yiansto.com.key"

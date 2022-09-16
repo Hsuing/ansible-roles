@@ -1,0 +1,6 @@
+- hosts: ldap
+  vars:
+   - openldap_dc: dc=freehan,dc=com
+   - openldap_passwd: han123
+  roles:
+  - openldap

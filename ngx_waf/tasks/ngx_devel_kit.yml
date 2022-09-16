@@ -1,0 +1,26 @@
+---
+# author: hanxiong
+- name: install | Check if ngx_devel_kit local file is already configured.
+  stat: path={{ lua_nginx_file_path }}
+  connection: local
+  register: ngx_devel_kit_file_result
+
+- name: install | Download {{ ngx_devel_kit_file_url }} file.
+  get_url: url={{ ngx_devel_kit_file_url }} dest={{ software_files_path }} validate_certs=false
+  connection: local
+  when: not ngx_devel_kit_file_result.stat.exists
+
+- name: install | create "{{ party_modules_files_path }}" path
+  file: path={{ party_modules_files_path }} state=directory
+
+- name: install | Copy "{{ ngx_devel_kit_file_name }}" file to agent.
+  unarchive:
+    src: "{{ software_files_path }}/{{ ngx_devel_kit_file_name }}"
+    dest: "{{ party_modules_files_path }}"
+    creates: "{{ party_modules_files_path }}/ngx_devel_kit-0.3.0"
+
+- name: install | Copy ngx_bro file to agent.
+  unarchive:
+    src: "{{ software_files_path }}/ngx_brotli.tar.gz"
+    dest: "{{ party_modules_files_path }}"
+    creates: "{{ party_modules_files_path }}/ngx_brotli"

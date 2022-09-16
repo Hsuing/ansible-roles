@@ -1,0 +1,6 @@
+---
+# author: hanxiong
+
+- include: install.yml
+- include: plugins.yml
+- include: configure.yml

@@ -1,0 +1,14 @@
+---
+# author: hanxiong
+- include: yum.yml
+- include: pure_cache.yml
+- include: jemlloc.yml
+- include: lua21.yml
+- include: waf.yml
+- include: lua_nginx.yml
+- include: openssl.yml
+- include: libmaxminddb.yml
+- include: tengine_modules.yml
+- include: install.yml
+- include: configure.yml
+- include: logrotate.yml

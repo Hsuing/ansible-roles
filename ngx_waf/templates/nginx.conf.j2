@@ -1,0 +1,259 @@
+user  {{ nginx_user }};
+
+error_log  {{ nginx_error_log }};
+pid        {{ nginx_pidfile }};
+
+worker_processes  {{ nginx_worker_processes }};
+worker_cpu_affinity auto;
+worker_rlimit_nofile {{ nginx_worker_rlimit_nofile }};
+
+events {
+    use {{ nginx_epoll }};
+    worker_connections  {{ nginx_worker_connections }};
+    multi_accept {{ nginx_multi_accept }};
+    accept_mutex on;
+    accept_mutex_delay 10ms;    # 设置获得互斥锁的最少延迟时间。 默认值 500ms
+}
+{% if nginx_extra_conf_options %}
+{{ nginx_extra_conf_options }}
+{% endif %}
+http {
+    include       {{ nginx_mime_file_path }};
+    default_type  application/octet-stream;
+    server_tokens {{ nginx_server_tokens }};
+#vts
+#    vhost_traffic_status_zone;
+#    vhost_traffic_status_filter_by_host on;
+# tricks
+    server_tag 'Apache';
+    server_info off;
+    server_tokens off;
+    underscores_in_headers on;
+    proxy_hide_header "X-Powered-By";
+    proxy_hide_header "Server";
+
+    add_header X-Frame-Options "deny" always;
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header X-Xss-Protection "1;mode=block" always;
+    add_header  Set-Cookie "path=/;HttpOnly";
+	
+	underscores_in_headers on; #忽略掉_
+    ignore_invalid_headers off;
+    charset utf-8;
+    
+    server_names_hash_bucket_size {{ nginx_server_names_hash_bucket_size }};
+    server_names_hash_max_size {{ nginx_server_names_hash_max_size }};
+    
+    reset_timedout_connection on;
+    
+    client_max_body_size {{ nginx_client_max_body_size }};
+    client_body_buffer_size 128k;
+    client_header_buffer_size 32k;
+    
+    large_client_header_buffers 4 32k;
+    client_header_timeout 30s;
+    client_body_timeout 30s;
+    send_timeout 30s;
+
+
+
+
+    # 开启 css、js 合并 #
+    concat on;
+    concat_max_files 20;
+    concat_unique on;
+    concat_delimiter "\r\n";
+    concat_ignore_file_error on;
+
+geoip2 /data/apps/nginx/geoip/maxmind-city.mmdb {
+    $geoip2_data_country_code default=CN source=$http_x_forwarded_for country iso_code;
+    $geoip2_data_country_name country names en;
+    $geoip2_data_city_name default=Shenzhen city names en;
+    $geoip2_data_subdivisions_name default=Beijing subdivisions 0 names en;
+    $geoip2_data_province_name subdivisions 0 names en;
+    $geoip2_data_province_isocode subdivisions 0 iso_code;
+}
+
+#country
+geoip2 /data/apps/nginx/geoip/GeoLite2-Country.mmdb {
+          $geoip2_country_code country iso_code;
+}
+
+map $geoip2_country_code $is_cn_country {
+        default no;
+        CN yes;
+}
+
+#log_format es '$server_addr`$host`$remote_addr`$http_x_forwarded_for`$time_local`$request_uri`$request_length`$bytes_sent`$request_time`$status`$upstream_addr`$upstream_cache_status`$upstream_response_time`$request_method`$http_user_agent`$upstream_status`$geoip2_country_code';
+
+
+log_format es '$server_addr`$host`$remote_addr`$http_x_forwarded_for`$time_local`$request_uri`$request_length`$bytes_sent`$request_time`$status`$upstream_addr`$upstream_cache_status`$upstream_response_time`$request_method`$http_user_agent`$upstream_status`$http_referer`$geoip2_data_city_name`$geoip2_data_subdivisions_name`$geoip2_data_country_name`$geoip2_data_country_code';
+
+
+#loki
+log_format json_analytics '{'
+                            '"msec": "$msec", ' # request unixtime in seconds with a milliseconds resolution
+                            '"connection": "$connection", ' # connection serial number
+                            '"connection_requests": "$connection_requests", ' # number of requests made in connection
+                    '"pid": "$pid", ' # process pid
+                    '"request_id": "$request_id", ' # the unique request id
+                    '"request_length": "$request_length", ' # request length (including headers and body)
+                    '"remote_addr": "$remote_addr", ' # client IP
+                    '"remote_user": "$remote_user", ' # client HTTP username
+                    '"remote_port": "$remote_port", ' # client port
+                    '"time_local": "$time_local", '
+                    '"time_iso8601": "$time_iso8601", ' # local time in the ISO 8601 standard format
+                    '"request": "$request", ' # full path no arguments if the request
+                    '"request_uri": "$request_uri", ' # full path and arguments if the request
+                    '"args": "$args", ' # args
+                    '"status": "$status", ' # response status code
+                    '"body_bytes_sent": "$body_bytes_sent", ' # the number of body bytes exclude headers sent to a client
+                    '"bytes_sent": "$bytes_sent", ' # the number of bytes sent to a client
+                    '"http_referer": "$http_referer", ' # HTTP referer
+                    '"http_user_agent": "$http_user_agent", ' # user agent
+                    '"http_x_forwarded_for": "$http_x_forwarded_for", ' # http_x_forwarded_for
+                    '"http_host": "$http_host", ' # the request Host: header
+                    '"server_name": "$server_name", ' # the name of the vhost serving the request
+                    '"request_time": "$request_time", ' # request processing time in seconds with msec resolution
+                    '"upstream": "$upstream_addr", ' # upstream backend server for proxied requests
+                    '"upstream_connect_time": "$upstream_connect_time", ' # upstream handshake time incl. TLS
+                    '"upstream_header_time": "$upstream_header_time", ' # time spent receiving upstream headers
+                    '"upstream_response_time": "$upstream_response_time", ' # time spend receiving upstream body
+                    '"upstream_response_length": "$upstream_response_length", ' # upstream response length
+                    '"upstream_cache_status": "$upstream_cache_status", ' # cache HIT/MISS where applicable
+                    '"ssl_protocol": "$ssl_protocol", ' # TLS protocol
+                    '"ssl_cipher": "$ssl_cipher", ' # TLS cipher
+                    '"scheme": "$scheme", ' # http or https
+                    '"request_method": "$request_method", ' # request method
+                    '"server_protocol": "$server_protocol", ' # request protocol, like HTTP/1.1 or HTTP/2.0
+                    '"pipe": "$pipe", ' # "p" if request was pipelined, "." otherwise
+                    '"gzip_ratio": "$gzip_ratio", '
+                    '"http_cf_ray": "$http_cf_ray",'
+                    '"geoip2_data_country_code": "$geoip2_data_country_code"'
+                    '}';
+
+log_format yaml     '- remote_addr: "$remote_addr"\n'
+                        '  remote_user: "$remote_user"\n'
+                        '  time_local: "$time_local"\n'
+                        '  request: "$request"\n'
+                        '  status: "$status"\n'
+                        '  body_bytes_sent: "$body_bytes_sent"\n'
+                        '  http_referer: "$http_referer"\n'
+                        '  http_user_agent: "$http_user_agent"\n'
+                        '  http_x_forwarded_for: "$http_x_forwarded_for"\n'
+                        '  waf_blocked: $waf_blocked\n'
+                        '  waf_spend: $waf_spend\n'
+                        '  waf_rule_type: "$waf_rule_type"\n'
+                        '  waf_rule_details: "$waf_rule_details"\n';
+
+
+
+    access_log  {{ nginx_access_log }} es;
+
+    sendfile        {{ nginx_sendfile }};
+    tcp_nopush      {{ nginx_tcp_nopush }};
+    tcp_nodelay     {{ nginx_tcp_nodelay }};
+
+    keepalive_timeout  {{ nginx_keepalive_timeout }};
+    keepalive_requests {{ nginx_keepalive_requests }};
+
+    chunked_transfer_encoding on;
+    gzip on;
+    gzip_vary on;
+    gzip_proxied any;
+    gzip_disable "msie6";
+    gzip_min_length  1100;
+    gzip_buffers     4 32k;
+    gzip_http_version 1.1;
+    gzip_comp_level 6;
+    gzip_types text/plain text/css text/xml text/javascript application/json application/javascript application/x-javascript application/xml application/xml+rss image/jpeg image/png font/ttf font/otf image/svg+xml;
+    gzip_static                 always;
+    gunzip                      on;
+    #proxy_hide_header Vary;#提升cache命中率
+    
+#bro
+    brotli on;
+    brotli_comp_level 6;
+    brotli_buffers 16 8k;
+    brotli_min_length 512;
+    brotli_types text/plain text/javascript text/css text/xml text/x-component application/javascript application/x-javascript application/xml application/json application/xhtml+xml application/rss+xml application/atom+xml application/x-font-ttf application/vnd.ms-fontobject image/svg+xml image/x-icon font/opentype image/jpeg image/gif image/png font/ttf font/otf;
+    brotli_static always;
+
+
+#deny dns
+server  
+{  
+    listen 80 default_server;  
+    server_name _; #标示空主机头 使用“ – “ 和” ！@＃ “也可以
+    return 444;  
+}
+
+server {
+     listen 443 default_server ssl http2;
+     server_name _;
+     ssl_certificate   /data/apps/nginx/ssl/6425218_cyweb.leihuofeng.net.pem;      
+     ssl_certificate_key /data/apps/nginx/ssl/6425218_cyweb.leihuofeng.net.key;
+     return 444;
+}
+# location ~ .*/.*css/ {
+#        concat on;           #是否开启concat，默认是关闭的
+#       concat_max_files 20; #允许concat的最大文件数，默认是10
+#   }
+
+#    location ~ .*/.*js/ {
+#        concat on;
+#        concat_max_files 30;
+#    }
+
+#realip
+map $http_x_forwarded_for $clientRealIp {
+        ""  $remote_addr;
+        ~^(?P<firstAddr>[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+|[0-9A-Fa-f]+:[0-9A-Fa-f]+:[0-9A-Fa-f]+:[0-9A-Fa-f]+:[0-9A-Fa-f]+:[0-9A-Fa-f]+:[0-9A-Fa-f]+:[0-9A-Fa-f]+),?.*$ $firstAddr;
+}
+
+
+#webp
+map $http_accept $webp_suffix {
+    default "";
+    "~*webp" ".webp";
+}
+
+#ws
+map $http_upgrade $connection_upgrade {
+        default upgrade;
+        ''      close;
+}
+
+#cdn
+set_real_ip_from 0.0.0.0/0;
+real_ip_header X-Forwarded-For;
+real_ip_recursive on;
+
+    include vhost/*.conf;
+    #ssl_async  on;
+
+{% if nginx_proxy_cache_path %}
+    proxy_cache_path {{ nginx_proxy_cache_path }};
+{% endif %}
+{% if nginx_extra_http_options %}
+    {{ nginx_extra_http_options|indent(4, False) }}
+{% endif %}
+{% if nginx_stream %}
+}
+stream {
+{% endif %}
+{% for upstream in nginx_upstreams %}
+    upstream {{ upstream.name }} {
+{% if upstream.strategy is defined %}
+        {{ upstream.strategy }};
+{% endif %}
+{% for server in upstream.servers %}
+        server {{ server }};
+{% endfor %}
+{% if upstream.keepalive is defined %}
+        keepalive {{ upstream.keepalive }};
+{% endif %}
+    }
+{% endfor %}
+
+}

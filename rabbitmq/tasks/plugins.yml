@@ -1,0 +1,12 @@
+---
+# author: hanxiong
+
+- name: configure | cpoy rabbitmq rabbitmq_delayed_message_exchange.
+  copy:
+     src: "/opt/software/rabbitmq_delayed_message_exchange-3.9.0.ez"
+     dest: "{{ software_install_path }}/rabbitmq/plugins/"
+  
+- name: configure | Enable rabbitmq plugins.
+  command: "{{ software_install_path }}/rabbitmq/sbin/rabbitmq-plugins enable {{ item  }}"
+  with_items:
+   - "rabbitmq_delayed_message_exchange"

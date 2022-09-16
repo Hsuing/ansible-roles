@@ -1,0 +1,62 @@
+---
+# author: hanxiong
+- name: install | Check if ngx_devel_kit local file is already configured.
+  stat: path={{ curlfilepath }}
+  connection: local
+  register: curl_file_result
+
+- name: install | Download {{ curlFileUrl }} file.
+  get_url: url={{ curlFileUrl }} dest={{ software_files_path }} validate_certs=false
+  connection: local
+  when: not curl_file_result.stat.exists
+
+- name: install | create {{ party_modules_files_path }} path
+  file: path={{ party_modules_files_path }} state=directory
+
+- name: install | Copy {{ WAFfilename }} file to agent.
+  unarchive:
+    src: "{{ software_files_path }}/{{ WAFfilename }}"
+    dest: "{{ party_modules_files_path }}/"
+
+- name: install | Copy {{ uthashfilename }} file to agent.
+  unarchive:
+    src: "{{ software_files_path }}/{{ uthashfilename }}"
+    dest: "/usr/local/src/"
+
+- name: install | Copy {{ libsodiumfilename }} file to agent.
+  unarchive:
+    src: "{{ software_files_path }}/{{ libsodiumfilename }}"
+    dest: "/tmp/"
+
+- name: install | libsodium install to agent.
+  shell: "{{ item }}"
+  with_items:
+    - "{{ libsodium_configure_command }}"
+    - "make -j $(nproc) && make install"
+  args:
+    chdir: "/tmp/libsodium-src"
+
+- name: install | Copy {{ curlfilename }} file to agent.
+  unarchive:
+    src: "{{ software_files_path }}/{{ curlfilename }}"
+    dest: "/tmp/"
+
+- name: install |curl install to agent.
+  shell: "{{ item }}"
+  with_items:
+    - "{{ curl_configure_command }}"
+    - "make -j $(nproc) && make install"
+  args:
+    chdir: "/tmp/curl-7.78.0"
+
+- name: export | uthash env uthash variable to agent .bashrc.
+  lineinfile: dest=/root/.bashrc line='export LIB_UTHASH=/usr/local/src/uthash'
+
+- name: export | curl env curl variable to agent .bashrc.
+  lineinfile: dest=/root/.bashrc line='export LIB_CURL=/usr/local/src/curl/build'
+
+- name: export | libsodium env libsodium variable to agent .bashrc.
+  lineinfile: dest=/root/.bashrc line='export LIB_SODIUM=/usr/local/src/libsodium-build'
+
+- name: source | waf .bashrc.
+  shell: ". /root/.bashrc"

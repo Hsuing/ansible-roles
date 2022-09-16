@@ -1,0 +1,36 @@
+---
+# author: hanxiong
+- name: install | create {{ party_modules_files_path }} path
+  file: path={{ party_modules_files_path }} state=directory
+
+- name: install | Check if jemlloc local file is already configured.
+  stat: path={{ jemlloc_name_path }}
+  connection: local
+  register: jemlloc_file_result
+
+- name: install | Download {{ jemlloc_url }} file.
+  get_url: url={{ jemlloc_url }} dest={{ software_files_path }} validate_certs=false
+  connection: local
+  when: not jemlloc_file_result.stat.exists
+
+- name: install | Copy jemlloc file to agent.
+  unarchive:
+    src: "{{ software_files_path }}/{{ jemlloc_software_files_name }}"
+    dest: "{{ party_modules_files_path }}"
+    creates: "{{ party_modules_files_path }}/jemalloc-5.2.0"
+
+- name: install | Build an install src/jemlloc.
+  shell: "{{ item }}"
+  with_items:
+    - "{{ jemlloc_configure_command }}"
+    - make && make install
+  args:
+    chdir: "{{ party_modules_files_path }}/jemalloc-5.2.0"
+
+- name: echo ldconfig_name to /etc/ld.so.conf.d/local.conf
+  raw: "echo '/usr/local/lib' > /etc/ld.so.conf.d/local.conf;ldconfig"
+- name: install | Copy ngx_bro file to agent.
+  unarchive:
+    src: "{{ software_files_path }}/ngx_brotli.tar.gz"
+    dest: "{{ party_modules_files_path }}"
+    creates: "{{ party_modules_files_path }}/ngx_brotli"

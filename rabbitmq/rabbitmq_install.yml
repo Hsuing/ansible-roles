@@ -1,0 +1,8 @@
+- hosts: bw
+  vars:
+   - rabbitmq_version: 3.9.7
+   - rabbitmq_plugins: ['rabbitmq_top', 'rabbitmq_mqtt']
+   - rabbitmq_server_users: [{user: 'admin', pass: 'ad456ad', role: 'administrator'}]
+  roles:
+   - erlang 
+   - rabbitmq

@@ -1,0 +1,7 @@
+- hosts: dianshang
+  vars:
+   - rabbitmq_plugins: ['rabbitmq_top', 'rabbitmq_mqtt']
+   - rabbitmq_server_users: [{user: 'admin', pass: 'ad456ad', role: 'administrator'}]
+  roles:
+   - erlang 
+   - rabbitmq

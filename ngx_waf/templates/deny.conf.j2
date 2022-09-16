@@ -1,0 +1,86 @@
+if ($request_method !~ ^(GET|HEAD|POST)$ ) {
+return 444;
+}
+#防止SQL注入
+if ($query_string ~* (\$|'|--|[+|(%20)]union[+|(%20)]|[+|(%20)]insert[+|(%20)]|[+|(%20)]drop[+|(%20)]|[+|(%20)]truncate[+|(%20)]|[+|(%20)]update[+|(%20)]|[+|(%20)]from[+|(%20)]|[+|(%20)]grant[+|(%20)]|[+|(%20)]exec[+|(%20)]|[+|(%20)]where[+|(%20)]|[+|(%20)]select[+|(%20)]|[+|(%20)]and[+|(%20)]|[+|(%20)]or[+|(%20)]|[+|(%20)]count[+|(%20)]|[+|(%20)]exec[+|(%20)]|[+|(%20)]chr[+|(%20)]|[+|(%20)]mid[+|(%20)]|[+|(%20)]like[+|(%20)]|[+|(%20)]iframe[+|(%20)]|[\<|%3c]script[\>|%3e]|javascript|alert|webscan|dbappsecurity|style|confirm\(|innerhtml|innertext)(.*)$) { return 555; }
+ if ($uri ~* (/~).*) { return 501; }
+ if ($uri ~* (\\x.)) { return 501; }
+#防止SQL注入 
+ if ($query_string ~* "[;'<>].*") { return 509; }
+ if ($request_uri ~ " ") { return 509; }
+ if ($request_uri ~ (\/\.+)) { return 509; }
+ if ($request_uri ~ (\.+\/)) { return 509; }
+
+ #if ($uri ~* (insert|select|delete|update|count|master|truncate|declare|exec|\*|\')(.*)$ ) { return 503; }
+#防止SQL注入
+ if ($request_uri ~* "(cost\()|(concat\()") { return 504; }
+ if ($request_uri ~* "[+|(%20)]union[+|(%20)]") { return 504; }
+ if ($request_uri ~* "[+|(%20)]and[+|(%20)]") { return 504; }
+ if ($request_uri ~* "[+|(%20)]select[+|(%20)]") { return 504; }
+ if ($request_uri ~* "[+|(%20)]or[+|(%20)]") { return 504; }
+ if ($request_uri ~* "[+|(%20)]delete[+|(%20)]") { return 504; }
+ if ($request_uri ~* "[+|(%20)]update[+|(%20)]") { return 504; }
+ if ($request_uri ~* "[+|(%20)]insert[+|(%20)]") { return 504; }
+ if ($query_string ~ "(<|%3C).*script.*(>|%3E)") { return 505; }
+ if ($query_string ~ "GLOBALS(=|\[|\%[0-9A-Z]{0,2})") { return 505; }
+ if ($query_string ~ "_REQUEST(=|\[|\%[0-9A-Z]{0,2})") { return 505; }
+ if ($query_string ~ "proc/self/environ") { return 505; }
+ if ($query_string ~ "mosConfig_[a-zA-Z_]{1,21}(=|\%3D)") { return 505; }
+ if ($query_string ~ "base64_(en|de)code\(.*\)") { return 505; }
+ if ($query_string ~ "[a-zA-Z0-9_]=http://") { return 506; }
+ if ($query_string ~ "[a-zA-Z0-9_]=(\.\.//?)+") { return 506; }
+ if ($query_string ~ "[a-zA-Z0-9_]=/([a-z0-9_.]//?)+") { return 506; }
+ if ($query_string ~ "b(ultram|unicauca|valium|viagra|vicodin|xanax|ypxaieo)b") { return 507; }
+ if ($query_string ~ "b(erections|hoodia|huronriveracres|impotence|levitra|libido)b") {return 507; }
+ if ($query_string ~ "b(ambien|bluespill|cialis|cocaine|ejaculation|erectile)b") { return 507; }
+ if ($query_string ~ "b(lipitor|phentermin|pro[sz]ac|sandyauer|tramadol|troyhamby)b") { return 507; }
+if ($http_user_agent ~* LWP::Simple|BBBike|wget) {
+    return 444;
+}
+ if ($http_user_agent ~* ApacheBench|WebBench|Jmeter|JoeDog|Havij|GetRight|TurnitinBot|GrabNet|masscan|mail2000|github|wget|curl|Java|python|php|http_load) { return 444; }
+ if ($http_user_agent ~* "Go-Ahead-Got-It") { return 444; }
+ if ($http_user_agent ~* "GetWeb!") { return 444; }
+ if ($http_user_agent ~* "Go!Zilla") { return 444; }
+ if ($http_user_agent ~* "Download Demon") { return 444; }
+ if ($http_user_agent ~* "Indy Library") { return 444; }
+ if ($http_user_agent ~* "libwww-perl") { return 444; }
+ if ($http_user_agent ~* "Nmap Scripting Engine") { return 444; }
+ if ($http_user_agent ~* "~17ce.com") { return 444; }
+ if ($http_user_agent ~* "WebBench*") { return 444; }
+#禁止空user-agent
+if ( $http_user_agent ~ ^$) { 
+   return 444;
+}
+location  /msdn.cpp { return 444; }
+location  /cgi-bin { return 444; }
+
+location ~* \.(jsp|doc|php|shell|exe|cgi|cpp|perl|py|asp|cgi|sh|bash)$ {
+   return 444;
+}
+
+location ~* .*.(svn|git|cvs|gitignore) {
+   return 444;
+}
+
+
+location ~ /cron/*\.(php|php5)?$ { 
+   return 444;
+}
+
+location ~ ^/(static|images|cron)/.*\.(php|php5|.sh|.py|.pl)$ {
+        return 444;
+}
+
+location ~* ^/data/(attachment|avatar)/.*\.(php|php5)$ {
+        return 444;
+}
+
+#deny download
+location ~ \.(rar|sql|bak|gz|7z)$ {  
+   return 444;     
+}
+
+location ~ .*\.(?:htm|html)$ {
+ 	add_header Cache-Control "private, no-store, no-cache, must-revalidate, proxy-revalidate";
+}
+
