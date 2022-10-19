@@ -1,0 +1,27 @@
+---
+# author: hanxiong
+
+- name: configure | Setup postgresql.conf.
+  template:
+    dest: "{{ pg_config_path }}"
+    src: postgresql.service.j2
+    mode: 0644
+    owner: "{{ pg_user }}"
+    group: "{{ pg_group }}"
+
+- name: configure | Setup postgresql.service file.
+  template:
+    dest: "/usr/lib/systemd/system/"
+    mode: 0755
+    src: postgresql.service.j2
+
+- name: configure | Add pg services.
+  shell: "systemctl enable postgresql.service"
+  
+- name: configure | Ensure pg is running for centos6.
+  service: "name=postgresql state=started enabled=yes"
+  when: ansible_distribution == "CentOS" and ansible_distribution_major_version == "6"
+  
+- name: configure | Ensure pg is running for centos7.
+  systemd: "name=postgresql state=started enabled=yes"
+  when: ansible_distribution == "CentOS" and ansible_distribution_major_version == "7"

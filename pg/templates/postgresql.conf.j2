@@ -1,0 +1,117 @@
+listen_addresses = '*'
+port = 5532
+max_connections = 500
+superuser_reserved_connections = 10
+full_page_writes = on
+max_files_per_process = 2048000
+
+
+####################log######################
+log_checkpoints = on
+log_connections = on
+log_disconnections = on
+log_lock_waits = on
+log_temp_files = 1
+log_destination = 'csvlog'
+logging_collector = on
+log_autovacuum_min_duration = 1
+log_error_verbosity = default
+log_filename = 'postgresql-%Y-%m-%d_%H%.log'
+log_line_prefix = '%t [%p]: [%l-1] user=%u,db=%d,app=%a,client=%h'
+log_file_mode = 0600
+log_min_messages = warning
+log_duration = on
+log_timezone = 'PRC'
+timezone = 'PRC'
+
+#################slow_log#####################
+log_rotation_age = 1d
+log_rotation_size = 10240
+log_min_duration_statement = 3000
+log_statement = DDL
+log_truncate_on_rotation = on
+
+#################socket#######################
+unix_socket_directories = '/data/pgdata/data/'
+unix_socket_group = 'ptgres'
+unix_socket_permissions = 0700
+
+
+shared_buffers = 512MB
+temp_buffers = 16MB
+work_mem = 3048MB
+effective_cache_size = 2GB
+maintenance_work_mem = 128MB
+#max_stack_depth = 2MB
+dynamic_shared_memory_type = posix
+## PITR full_page_writes = on
+commit_delay = 0
+commit_siblings = 5
+
+################# wal ####################
+checkpoint_timeout = 60min
+checkpoint_completion_target = 0.5
+wal_level = logical
+max_wal_size = 1GB
+min_wal_size = 128MB
+archive_mode = on
+archive_timeout = 60s
+wal_keep_segments = 2048
+wal_sender_timeout = 60s
+wal_buffers = 16MB
+wal_writer_delay = 200ms
+wal_log_hints = on
+wal_compression = on
+archive_command = 'test ! -f /data/pgdata/archivedir/%f && cp %p /data/pgdata/archivedir/%f'
+
+
+#################### vacuum #####################
+
+autovacuum_vacuum_cost_limit = 4000
+
+
+############### master-slave ##############
+wal_level = hot_standby
+#hot_standby = on
+max_wal_senders = 50 
+
+
+################ sync #####################
+synchronous_commit = on
+checkpoint_timeout = 30min
+
+################ IO #####################
+shared_preload_libraries='pg_stat_statements,auth_delay,passwordcheck,auto_explain' 
+track_io_timing = on
+pg_stat_statements.max = 10000 
+pg_stat_statements.track = all
+pg_stat_statements.track_utility = off
+pg_stat_statements.save = on
+
+################ check_password #####################
+auth_delay.milliseconds = 5000
+
+
+
+################ LOCK MANAGEMENT #####################
+deadlock_timeout = 5s
+max_locks_per_transaction = 1024
+
+
+################ auto_explain #####################
+auto_explain.log_min_duration = 3s
+auto_explain.log_nested_statements = on
+auto_explain.log_analyze = true
+auto_explain.log_verbose = true
+auto_explain.log_timing = true
+auto_explain.log_buffers = true
+auto_explain.log_format = json
+
+
+################ # TCP settings  #####################
+tcp_keepalives_idle = 60
+tcp_keepalives_count = 10
+tcp_keepalives_interval = 5
+
+################ Authentication  ####################
+authentication_timeout = 1min

@@ -1,0 +1,25 @@
+---
+# author: hanxiong
+- name: install | Create pg group.
+  group: name={{ pg_group }}
+
+- name: install | Create pg user.
+  user: name={{ pg_user }} group={{ pg_group }} shell=/bin/bash createhome=yes
+
+- name: echo pass to pg user.
+  shell: "echo 'postgres' | passwd --stdin {{ pg_user }}"
+
+- name: create dir| pgdata.
+  shell: "mkdir -p /data/pgdata/{data,archivedir}"
+
+- name: chown pdata| pg.
+  shell: "chown -R {{ pg_user }}.{{ pg_group}} /data/pgdata && chown -R {{ pg_user }}.{{ pg_group}} {{ pg_software_install_path }}"
+
+- name: init pg data.
+  shell: "/usr/bin/su - {{ pg_user }} -c 'initdb -D /data/pgdata/data -U postgres --locale=en_US.UTF8 -E UTF8'"
+
+- name: configure | Setup postgresql.conf file.
+  template:
+    dest: "{{ pg_config_path }}/postgresql.conf"
+    mode: 0755
+    src: postgresql.conf.j2

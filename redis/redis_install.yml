@@ -1,0 +1,5 @@
+- hosts: redis
+  vars:
+   - redis_requirepass: '0f4649985edfdf11ae10a'
+  roles:
+  - { role: redis }

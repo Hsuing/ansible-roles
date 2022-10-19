@@ -1,0 +1,6 @@
+---
+# author: hanxiong
+- include: yum.yml
+- include: pg.yml
+- include: init_pgdata.yml
+- include: configure.yml

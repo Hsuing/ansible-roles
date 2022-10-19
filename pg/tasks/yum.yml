@@ -1,0 +1,56 @@
+- name: install | Ensure gcc packages are installed centos7.
+  package:
+    name: "{{ item }}"
+    state: installed
+  with_items:
+    - gcc
+    - llvm5.0
+    - llvm5.0-devel
+    - gcc-c++
+    - clang
+    - libicu-devel
+    - perl-ExtUtils-Embed
+    - readline
+    - readline-devel
+    - zlib
+    - zlib-devel
+    - openssl
+    - openssl-devel
+    - pam-devel
+    - libxml2-devel
+    - libxslt-devel
+    - openldap-devel
+    - systemd-devel
+    - tcl-devel
+    - python-devel
+  ignore_errors: yes
+  #  when: ansible_distribution == "CentOS" and ansible_distribution_major_version == "7"
+
+- name: install | Ensure gcc packages are installed centos8.
+  package:
+    name: "{{ item }}"
+    state: installed
+  with_items:
+    - gcc
+    - llvm5.0
+    - llvm5.0-devel
+    - gcc-c++
+    - clang
+    - libicu-devel
+    - perl-ExtUtils-Embed
+    - readline
+    - readline-devel
+    - zlib
+    - zlib-devel
+    - openssl
+    - openssl-devel
+    - pam-devel
+    - libxml2-devel
+    - libxslt-devel
+    - openldap-devel
+    - systemd-devel
+    - tcl-devel
+    - python3-devel
+    - python3
+  ignore_errors: yes
+  when: ansible_distribution == "CentOS" and ansible_distribution_major_version == "8"

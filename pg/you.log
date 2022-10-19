@@ -1,0 +1,243 @@
+vi /etc/sysctl.conf  
+  
+fs.nr_open=10240000  
+  
+sysctl -p 
+
+
+
+#------------------------------------------------------------------------------
+# CONNECTIONS AND AUTHENTICATION
+#------------------------------------------------------------------------------
+
+# - Connection Settings -
+listen_addresses = '0.0.0.0'
+port = 5432
+max_connections = 1000
+superuser_reserved_connections = 20
+unix_socket_directories = '/var/run/postgresql, /tmp'
+unix_socket_permissions = 0700
+
+# - TCP settings -
+tcp_keepalives_idle = 60
+tcp_keepalives_count = 10
+tcp_keepalives_interval = 5
+
+# - Authentication -
+authentication_timeout = 1min
+
+# - SSL -
+ssl = off
+
+#------------------------------------------------------------------------------
+# RESOURCE USAGE (except WAL)
+#------------------------------------------------------------------------------
+
+# - Memory -
+shared_buffers = 1024MB
+huge_pages = try
+temp_buffers = 64MB	
+work_mem = 64MB	
+maintenance_work_mem = 256MB
+dynamic_shared_memory_type = posix
+
+# - Disk -
+temp_file_limit = -1
+
+# - Kernel Resources -
+max_files_per_process = 1000
+
+# - Background Writer -
+bgwriter_delay = 100ms
+
+# - Asynchronous Behavior -
+effective_io_concurrency = 100
+max_worker_processes = 20
+max_parallel_maintenance_workers = 2
+max_parallel_workers_per_gather = 2
+parallel_leader_participation = on
+max_parallel_workers = 20
+old_snapshot_threshold = 3h
+
+#------------------------------------------------------------------------------
+# WRITE-AHEAD LOG
+#------------------------------------------------------------------------------
+
+# - Settings -
+wal_level = logical
+fsync = on
+synchronous_commit = on
+wal_sync_method = fdatasync
+full_page_writes = on
+wal_compression = on
+wal_log_hints = on
+wal_buffers = 16MB
+
+# - Checkpoints -
+checkpoint_timeout = 15min
+max_wal_size = 10GB
+min_wal_size = 1GB
+checkpoint_warning = 60s
+
+# - Archiving -
+
+archive_mode = always
+archive_command = 'cp -p %p /pgwal/pgxxoo/archlog/%f && chmod g+r /pgwal/pgxxoo/archlog/%f'
+archive_timeout = 1800
+
+
+#------------------------------------------------------------------------------
+# REPLICATION
+#------------------------------------------------------------------------------
+
+# - Sending Servers -
+max_wal_senders = 10
+wal_keep_segments = 300
+wal_sender_timeout = 600s
+max_replication_slots = 20
+track_commit_timestamp = on
+
+# - Master Server -
+#synchronous_standby_names = ''
+
+# - Standby Servers -
+hot_standby = on	
+
+
+# - Subscribers -
+max_logical_replication_workers = 4
+max_sync_workers_per_subscription = 2
+
+
+#------------------------------------------------------------------------------
+# QUERY TUNING
+#------------------------------------------------------------------------------
+
+# - Planner Cost Constants -
+random_page_cost = 3.0
+effective_cache_size = 20GB
+
+# - Other Planner Options -
+default_statistics_target = 200
+
+
+
+#------------------------------------------------------------------------------
+# REPORTING AND LOGGING
+#------------------------------------------------------------------------------
+
+# - Where to Log -
+log_destination = 'csvlog'
+logging_collector = on
+log_directory = 'log'
+log_filename = 'postgresql-%m-%d.log'
+log_file_mode = 0600
+log_truncate_on_rotation = on
+log_rotation_age = 1d
+log_rotation_size = 0
+
+# - When to Log -
+log_min_duration_statement = 1000
+
+
+# - What to Log -
+log_checkpoints = on
+log_connections = on
+log_disconnections = on
+
+log_line_prefix = '%t:%r:%u@%d:[%p]: '
+log_lock_waits = on
+log_statement = 'ddl'
+log_replication_commands = on
+log_temp_files = -1
+log_timezone = 'Asia/Shanghai'
+
+#------------------------------------------------------------------------------
+# PROCESS TITLE
+#------------------------------------------------------------------------------
+cluster_name = 'pgxxoo'
+
+
+#------------------------------------------------------------------------------
+# STATISTICS
+#------------------------------------------------------------------------------
+
+# - Query and Index Statistics Collector -
+track_activities = on
+track_counts = on
+track_io_timing = on
+track_functions = pl
+track_activity_query_size = 10240
+stats_temp_directory = 'pg_stat_tmp'
+
+
+#------------------------------------------------------------------------------
+# AUTOVACUUM
+#------------------------------------------------------------------------------
+
+autovacuum = on
+log_autovacuum_min_duration = 1000
+autovacuum_max_workers = 5	
+
+
+#------------------------------------------------------------------------------
+# CLIENT CONNECTION DEFAULTS
+#------------------------------------------------------------------------------
+
+# - Statement Behavior -
+#client_min_messages = notice
+search_path = '"$user", public'
+#statement_timeout = 0
+lock_timeout = 600s
+idle_in_transaction_session_timeout = 1h
+vacuum_freeze_min_age = 100000000
+vacuum_freeze_table_age = 500000000
+vacuum_multixact_freeze_min_age = 10000000
+vacuum_multixact_freeze_table_age = 500000000
+
+# - Locale and Formatting -
+datestyle = 'iso, mdy'
+timezone = 'Asia/Shanghai'
+lc_messages = 'en_US.UTF-8'
+lc_monetary = 'en_US.UTF-8'
+lc_numeric = 'en_US.UTF-8'
+lc_time = 'en_US.UTF-8'
+
+# default configuration for text search
+default_text_search_config = 'pg_catalog.english'
+
+
+# - Shared Library Preloading -
+shared_preload_libraries = 'pg_stat_statements, auto_explain, pg_pathman'	# (change requires restart)
+
+# - Other Defaults -
+
+#dynamic_library_path = '$libdir'
+
+#------------------------------------------------------------------------------
+# LOCK MANAGEMENT
+#------------------------------------------------------------------------------
+deadlock_timeout = 5s
+max_locks_per_transaction = 1024
+
+
+#------------------------------------------------------------------------------
+# pg_stat_statements
+#------------------------------------------------------------------------------
+pg_stat_statements.max = 10000
+pg_stat_statements.track = all
+pg_stat_statements.track_utility = true
+pg_stat_statements.save = true
+
+
+#------------------------------------------------------------------------------
+# auto_explain
+#------------------------------------------------------------------------------
+auto_explain.log_min_duration = 1s
+auto_explain.log_nested_statements = on
+auto_explain.log_analyze = true
+auto_explain.log_verbose = true
+auto_explain.log_timing = true
+auto_explain.log_buffers = true
+auto_explain.log_format = json
+

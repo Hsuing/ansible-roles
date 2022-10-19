@@ -1,0 +1,71 @@
+---
+# author: hanxiong
+- name: install | create {{ pg_download_path }} path
+  file: path={{ pg_download_path }} state=directory
+
+- name: install | Check if {{ pg_name }} local file is already configured.
+  stat: path={{ pg_download_path }}/{{ pg_name }}
+  connection: local
+  register: pg_file_result
+
+- name: install | Download {{ pg_url }} file.
+  get_url: url={{ pg_url }} dest={{ pg_download_path }} validate_certs=false
+  connection: local
+  when: not pg_file_result.stat.exists
+
+- name: install | Copy pg file to agent.
+  unarchive:
+    src: "{{ pg_download_path }}/{{ pg_name }}"
+    dest: "/tmp/"
+    creates: "/tmp/postgresql-12.2"
+
+- name: install | Build an install src/pg.
+  shell: "{{ item }}"
+  with_items:
+    - "{{ pg_configure_command }}"
+    - make && make install
+  args:
+    chdir: "/tmp/postgresql-12.2"
+
+- name: install | Build an install pg_stat_statements.
+  shell: "{{ item }}"
+  with_items:
+    - make && make install
+  args:
+    chdir: "/tmp/postgresql-12.2/contrib/pg_stat_statements"
+
+- name: install | Build an install passwordcheck
+  shell: "{{ item }}"
+  with_items:
+    - make && make install
+  args:
+    chdir: "/tmp/postgresql-12.2/contrib/passwordcheck"
+
+- name: install | Build an install auth_delay
+  shell: "{{ item }}"
+  with_items:
+    - make && make install
+  args:
+    chdir: "/tmp/postgresql-12.2/contrib/auth_delay"
+
+- name: install | Build an install auto_explain 
+  shell: "{{ item }}"
+  with_items:
+    - make && make install
+  args:
+    chdir: "/tmp/postgresql-12.2/contrib/auto_explain"
+
+- name: disabled selinux.
+  shell: "/sbin/setenforce 0"
+  ignore_errors: True
+
+- name: export | pg variable to agent .bashrc.
+  shell: "echo 'export PATH=/data/apps/pgsql/12/bin:$PATH' >/etc/profile.d/pgsql.sh"
+
+- name: configure | Setup postgresql.service file.
+  template:
+    dest: "/usr/lib/systemd/system/postgresql.service"
+    mode: 0755
+    src: postgresql.service.j2
+  tags:
+  - only

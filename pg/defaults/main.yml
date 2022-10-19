@@ -1,0 +1,41 @@
+---
+# author: hanxiong
+version: "12"
+
+pg_download_path: "/opt/software"
+
+pg_url: "https://ftp.postgresql.org/pub/source/v12.2"
+pg_name: "postgresql-12.2.tar.gz"
+pg_name_path: "{{ software_files_path}}/{{ openssl_name }}"
+
+pg_software_install_path: "/data/apps/pgsql/{{ version }}"
+
+pg_config_path: "/data/pgdata/data/"
+
+pg_user: 'ptgres'
+pg_group: 'ptgres'
+#5432
+pg_port: '5532'
+
+pg_build_options: ''
+pg_configure_command: >
+  ./configure
+  --prefix={{ pg_software_install_path }}
+  --enable-nls
+  --with-python
+  --with-tcl
+  --with-gssapi
+  --with-icu
+  --with-openssl
+  --with-pam 
+  --with-ldap
+  --with-systemd
+  --with-libxml
+  --with-libxslt
+  --enable-thread-safety
+  --with-wal-blocksize=8
+  --with-blocksize=8
+  --with-segsize=10
+  --with-pgport={{ pg_port }}
+  --enable-dtrace
+  {{ pg_build_options }}
