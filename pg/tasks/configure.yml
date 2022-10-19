@@ -25,3 +25,7 @@
 - name: configure | Ensure pg is running for centos7.
   systemd: "name=postgresql state=started enabled=yes"
   when: ansible_distribution == "CentOS" and ansible_distribution_major_version == "7"
+
+- name: configure | Ensure pg is running for AWS.
+  systemd: "name=postgresql state=started enabled=yes"
+  when: ansible_distribution == "Amazon" and ansible_distribution_major_version == "2"
