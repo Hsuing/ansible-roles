@@ -1,0 +1,3 @@
+- hosts: web
+  roles:
+  - { role: php, php_install_from_source: true }

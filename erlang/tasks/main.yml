@@ -1,0 +1,65 @@
+---
+# author: hanxiong
+
+- name: Check if erlang local file is already configured.
+  stat: path={{ erlang_file_path }}
+  connection: local
+  register: erlang_file_result
+
+- name: Create software files directory.
+  file: path={{ software_files_path }} state=directory
+  connection: local
+  when: not erlang_file_result.stat.exists
+  
+- name: Download erlang file.
+  get_url: url={{ erlang_file_url }} dest={{ software_files_path }}
+  connection: local
+  when: not erlang_file_result.stat.exists
+ 
+- name: Copy erlang file to agent.
+  unarchive:
+    src: "{{ erlang_file_path }}"
+    dest: "/tmp/"
+    creates: "/tmp/otp_src_{{ erlang_version }}"
+
+- name: Check if erlang bin file is already configured.
+  stat: path=/usr/local/lib/erlang/bin/erl
+  register: erlang_bin_file_result
+  
+- name: Ensure gcc packages are installed.
+  yum:
+    name: "{{ item }}"
+    state: installed
+  with_items:
+    - gcc
+    - gcc-c++
+    - libtool
+    - make
+    - libtool
+    - zlib
+    - zlib-devel
+    - openssl
+    - openssl-devel
+    - ncurses-devel
+  when: not erlang_bin_file_result.stat.exists
+
+- name: Build an install erlang.
+  shell: "./configure --prefix={{ software_install_path }}/{{ erlang_name }} && make && make install" 
+  args:
+    chdir: "/tmp/otp_src_{{ erlang_version }}"
+  when: not erlang_bin_file_result.stat.exists
+   
+- name: Config environment variable.
+  lineinfile: dest=/etc/bashrc line='export PATH={{ software_install_path }}/{{ erlang_name }}/bin/:$PATH'
+  run_once: yes
+
+- name: erl link to /usr/bin/erl
+  file: "src={{ software_install_path }}/{{ erlang_name }}/bin/erl dest=/usr/bin/erl state=link"
+
+- name: erlang version.
+  command: erl -version
+  register: result
+  changed_when: false
+  ignore_errors: True
+
+- debug: var=result.stderr

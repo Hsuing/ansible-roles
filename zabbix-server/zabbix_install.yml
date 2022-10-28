@@ -1,0 +1,27 @@
+---
+- hosts: 52.194.189.123
+  vars:
+    - zabbix_server_db: zabbix
+    - zabbix_server_db_user: zabbix
+    - zabbix_server_db_password: zabbix
+    - zabbix_server_db_host: 127.0.0.1
+  roles:
+    - { role: mysql57 , mysql57_password: "123456" }
+    - { role: php, php_httpd_enable: true, php_install_from_source: true }
+
+  tasks:
+    - name: configure_db | Create zabbix database.
+      shell: source /etc/profile; mysql -uroot --socket=/data/mysql_data/3306/mysql.sock -e "{{ item }}"
+      with_items:
+        - "create database {{ zabbix_server_db }} character set utf8 collate utf8_bin;"
+        - "grant all privileges on {{  zabbix_server_db }}.* to '{{ zabbix_server_db_user }}'@'{{ zabbix_server_db_host }}' identified by '{{ zabbix_server_db_password }}';"
+    # 配置zabbix-server
+- hosts: 52.194.189.123
+  vars:
+    - zabbix_server_db: zabbix
+    - zabbix_server_db_user: zabbix
+    - zabbix_server_db_password: zabbix
+    - zabbix_server_db_host: 127.0.0.1
+    - zabbix_server_install_from_source: true
+  roles:
+    - zabbix-server
