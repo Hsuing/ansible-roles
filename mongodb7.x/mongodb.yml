@@ -1,3 +1,3 @@
 - hosts: db
   roles:
-   - { role: mongodb, mongodb_port: 27018, mongodb_rest: true}
+   - { role: mongodb7.x, mongodb_port: 27018, mongodb_rest: true}
