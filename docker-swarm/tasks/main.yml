@@ -1,0 +1,3 @@
+---
+# author: han
+- include: docker_swarm_init.yml

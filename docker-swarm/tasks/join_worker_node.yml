@@ -1,0 +1,15 @@
+- name: Docker Swarm - Checking Swarm Mode status
+  command: "docker info"
+  register: "docker_info"
+  changed_when: false
+  check_mode: no
+  become: true
+  tags: [docker-swarm]
+
+- name: "join as a worker"
+  shell: "docker swarm join --token {{ hostvars['manager1']['worker_token']['stdout'] }} {{ hostvars['manager1']['ansible_eth0'] }}:2377"
+  register: hello
+- debug: var=hello.sdtout
+#  when: "docker_info.stdout.find('Swarm: inactive') != -1"
+#  retries: 3
+#  delay: 20

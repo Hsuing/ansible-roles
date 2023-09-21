@@ -1,0 +1,27 @@
+- name: Docker Swarm - Checking Swarm Mode status
+  command: "docker info"
+  register: "docker_info"
+  changed_when: false
+  check_mode: no
+  become: true
+  tags: [docker-swarm]
+
+- name: Docker Swarm - Initializing Docker Swarm Mode on first manager
+  command: >
+          docker swarm init
+          --listen-addr {{ swarm_advertise_addr }}:{{ docker_swarm_port }}
+          --advertise-addr {{ swarm_advertise_addr }}
+  become: true
+  when: >
+        'Swarm: inactive' in docker_info.stdout
+  tags: [docker-swarm]
+
+- name: "get docker swarm manager token"
+  shell: docker swarm join-token -q manager
+  register: manager_token
+
+- name: "get docker swarm worker token"
+  shell: docker swarm join-token -q worker
+  register: worker_token
+
+
