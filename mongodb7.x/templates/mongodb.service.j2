@@ -1,0 +1,24 @@
+[Unit]
+Description= mongodb service manager
+[Service]
+LimitFSIZE=infinity
+LimitCPU=infinity
+LimitAS=infinity
+LimitMEMLOCK=infinity
+LimitNOFILE=64000
+# (processes/threads)
+LimitNPROC=64000
+
+User=mongodb
+Group=mongodb
+PIDFile={{ mongodb_data_path }}/{{ mongodb_port }}/mongod.pid
+ExecStart= {{ software_install_path }}/mongodb/bin/mongod -f {{ mongodb_data_path }}/{{ mongodb_port }}/mongod.yml
+ExecStop= {{ software_install_path }}/mongodb/bin/mongod -f {{ mongodb_data_path }}/{{ mongodb_port }}/mongod.yml --shutdown
+Restart=always
+Type=forking
+KillMode=process
+Restart=on-failure
+RestartSec=42s
+
+[Install]
+WantedBy=multi-user.target

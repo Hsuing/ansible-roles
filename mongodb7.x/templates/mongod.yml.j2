@@ -1,0 +1,58 @@
+#This is mongodb config file for replica set
+#systemlog file
+systemLog:
+  traceAllExceptions: false
+  quiet: false
+  logRotate: rename
+  destination: file
+  logAppend: true
+  path: {{ mongodb_data_path }}/{{ mongodb_port }}/logs/mongod.log
+  timeStampFormat: iso8601-local
+  component:
+     index:
+       verbosity: 1
+ 
+#storage
+storage:
+  dbPath: {{ mongodb_data_path }}/{{ mongodb_port }}/data/
+  directoryPerDB: true
+  wiredTiger:
+     engineConfig:
+        cacheSizeGB: 2
+        journalCompressor: zstd
+        directoryForIndexes: true
+        zstdCompressionLevel: 10
+     indexConfig:
+        prefixCompression: true
+ 
+processManagement:
+  fork: true
+  timeZoneInfo: /usr/share/zoneinfo
+  pidFilePath: {{ mongodb_data_path }}/{{ mongodb_port }}/mongod.pid
+ 
+# network interfaces
+net:
+  port: {{ mongodb_port }}
+  bindIp: 192.168.177.129, 127.0.0.1
+  bindIpAll: false
+  maxIncomingConnections: 52528
+  wireObjectCheck: true
+  ipv6: false
+  unixDomainSocket:
+     enabled: true
+     pathPrefix: /tmp
+     filePermissions: 0700
+
+operationProfiling:
+    slowOpThresholdMs: 200
+    mode: slowOp 
+
+setParameter:
+    enableLocalhostAuthBypass: true
+    authenticationMechanisms: SCRAM-SHA-1,SCRAM-SHA-256
+
+#security options
+security:
+   keyFile: {{ mongodb_data_path }}/{{ mongodb_port }}/keyfile
+   authorization: enabled
+   javascriptEnabled: true

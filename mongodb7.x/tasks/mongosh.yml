@@ -1,0 +1,19 @@
+---
+# author: han
+- name: Copy mongosh file to agent.
+  unarchive:
+    src: "{{ mongosh_file_path }}"
+    dest: "/tmp/"
+
+- name: install | copy mongosh path
+  shell: "cp /tmp/mongosh-1.10.6-linux-x64/bin/mongosh {{ software_install_path }}/mongodb/bin/ "
+
+- name: install | copy mongosh_crypt_v1.so path
+  shell: "cp /tmp/mongosh-1.10.6-linux-x64/bin/mongosh_crypt_v1.so /usr/local/lib/"
+
+
+- name: just force systemd to reread configs
+  systemd: daemon_reload=yes
+
+- name: Ensure mongodb is running and enabled on boot.
+  systemd: "name=mongodb state=started enabled=yes"
