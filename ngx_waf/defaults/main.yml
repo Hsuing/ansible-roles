@@ -14,12 +14,12 @@ libmaxminddb_configure_command: >
 echo_software_files_name: "echo-nginx-module.tar.gz"
 
 ngx_http_upstream_dynamic_module_name: "ngx_http_upstream_dynamic_module.tar.gz"
-ngx_http_geoip2_module_name: "ngx_http_geoip2_module.zip"
+ngx_http_geoip2_module_name: "ngx_http_geoip2_module-3.4.tar.gz"
 
 ngx_vts_module_name: "nginx_vts.tar.gz"
 
 
-libmaxminddb_name: "libmaxminddb-1.3.2.tar.gz"
+libmaxminddb_name: "libmaxminddb-1.7.1.tar.gz"
 maxmind_city_name: "maxmind-city.mmdb.tar.gz"
 
 tcp_proxy_name: "nginx_tcp_proxy_module.tar.gz"
@@ -40,7 +40,15 @@ lua_nginx_module_name: "v0.10.14rc4.tar.gz"
 software_files_path: "/opt/software"
 software_install_path: "/data/apps"
 
-nginx_version: "2.3.2"
+geoip2_file_path: "{{ software_files_path }}"
+geoip2_name: "ngx_http_geoip2_module-3.4.tar.gz"
+geoip2_file_url: "https://github.com/leev/ngx_http_geoip2_module/archive/refs/tags/3.4.tar.gz"
+
+libmaxminddb_file_path: "{{ software_files_path }}"
+libmaxminddb_name: "libmaxminddb-1.7.1.tar.gz"
+libmaxminddb_file_url: "https://github.com/maxmind/libmaxminddb/releases/download/1.7.1/libmaxminddb-1.7.1.tar.gz"
+
+nginx_version: "2.4.1"
 
 nginx_file: "tengine-{{ nginx_version }}.tar.gz"
 nginx_file_path: "{{ software_files_path }}/{{ nginx_file }}"
@@ -150,7 +158,6 @@ nginx_configure_command: >
   --with-select_module
   --without-select_module
   --with-poll_module
-  --without-poll_module
   --without-procs
   --with-threads
   --with-file-aio
@@ -185,7 +192,7 @@ nginx_configure_command: >
   --add-module={{ party_modules_files_path }}/ngx_slab_stat
   --add-module={{ party_modules_files_path }}/ngx_cache_purge-2.3
   --add-module={{ party_modules_files_path }}/echo-nginx-module
-  --add-module={{ party_modules_files_path }}/ngx_http_geoip2_module-master 
+  --add-module={{ party_modules_files_path }}/ngx_http_geoip2_module-3.4
   --add-module={{ party_modules_files_path }}/nginx-module-vts-0.1.18
   --add-module={{ party_modules_files_path }}/ngx_waf-8.0.3
   --with-debug

@@ -11,6 +11,26 @@
   connection: local
   when: not jemlloc_file_result.stat.exists
 
+- name: install | Check if {{ libmaxminddb_name }} local file is already configured.
+  stat: path={{ libmaxminddb_file_path }}/{{ libmaxminddb_name }}
+  connection: local
+  register: libmaxminddb_file_result
+
+- name: install | Download {{ libmaxminddb_file_url }} file.
+  get_url: url={{ libmaxminddb_file_url }} dest={{ software_files_path }} validate_certs=false
+  connection: local
+  when: not libmaxminddb_file_result.stat.exists
+
+- name: install | Check if geoip2 local file is already configured.
+  stat: path={{ geoip2_file_path }}/{{ geoip2_name }}
+  connection: local
+  register: geoip2_file_result
+
+- name: install | Download {{ geoip2_file_url }} file.
+  get_url: url={{ geoip2_file_url }} dest={{ software_files_path }} validate_certs=false
+  connection: local
+  when: not geoip2_file_result.stat.exists
+
 - name: install | Copy nginx file to agent.
   unarchive:
     src: "{{ nginx_file_path }}"
@@ -37,6 +57,7 @@
     - ngx_http_reqstat_module
     - ngx_slab_stat
     - ngx_backtrace_module
+    - ngx_http_reqstat_module
   args:
     chdir: "/tmp/tengine-{{ nginx_version }}/modules"
 
@@ -50,7 +71,7 @@
   unarchive:
     src: "{{ software_files_path }}/{{ ngx_http_geoip2_module_name }}"
     dest: "/data/apps/nginx/party_modules"
-    creates: "{{ party_modules_files_path }}/ngx_http_geoip2_module"
+    creates: "{{ party_modules_files_path }}/ngx_http_geoip2_module-3.4"
 
 - name: install | Copy nginx_vts file to agent.
   unarchive:

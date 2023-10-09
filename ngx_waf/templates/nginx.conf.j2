@@ -27,8 +27,6 @@ http {
 # tricks
     server_tag 'Apache';
     server_info off;
-    server_tokens off;
-    underscores_in_headers on;
     proxy_hide_header "X-Powered-By";
     proxy_hide_header "Server";
 
@@ -37,7 +35,7 @@ http {
     add_header X-Xss-Protection "1;mode=block" always;
     add_header  Set-Cookie "path=/;HttpOnly";
 	
-	underscores_in_headers on; #忽略掉_
+    underscores_in_headers on; #忽略掉_
     ignore_invalid_headers off;
     charset utf-8;
     
@@ -75,14 +73,14 @@ geoip2 /data/apps/nginx/geoip/maxmind-city.mmdb {
 }
 
 #country
-geoip2 /data/apps/nginx/geoip/GeoLite2-Country.mmdb {
-          $geoip2_country_code country iso_code;
-}
+#geoip2 /data/apps/nginx/geoip/GeoLite2-Country.mmdb {
+#          $geoip2_country_code country iso_code;
+#}
 
-map $geoip2_country_code $is_cn_country {
-        default no;
-        CN yes;
-}
+#map $geoip2_country_code $is_cn_country {
+#        default no;
+#        CN yes;
+#}
 
 #log_format es '$server_addr`$host`$remote_addr`$http_x_forwarded_for`$time_local`$request_uri`$request_length`$bytes_sent`$request_time`$status`$upstream_addr`$upstream_cache_status`$upstream_response_time`$request_method`$http_user_agent`$upstream_status`$geoip2_country_code';
 

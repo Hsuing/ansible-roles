@@ -7,8 +7,8 @@
 - include: waf.yml
 - include: lua_nginx.yml
 - include: openssl.yml
-- include: libmaxminddb.yml
 - include: tengine_modules.yml
+- include: libmaxminddb.yml
 - include: install.yml
 - include: configure.yml
 - include: logrotate.yml

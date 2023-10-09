@@ -51,6 +51,9 @@
   with_items:
     - "{{ nginx_configure_command }}"
     - "sed -i 's/-Werror//g' /tmp/tengine-{{ nginx_version }}/objs/Makefile"
+    - "sed -i '53s/nginx/apache/g' /tmp/tengine-{{ nginx_version }}/src/http/ngx_http_header_filter_module.c"
+    - "sed -i '105s/tengine/apache/g' /tmp/tengine-{{ nginx_version }}/src/http/ngx_http_special_response.c"
+    - "sed -i '107s/nginx/apache/g' /tmp/tengine-{{ nginx_version }}/src/http/ngx_http_special_response.c"
     - make && make install
   args:
     chdir: "/tmp/tengine-{{ nginx_version }}/"
