@@ -47,7 +47,7 @@
     - "{{ curl_configure_command }}"
     - "make -j $(nproc) && make install"
   args:
-    chdir: "/tmp/curl-7.78.0"
+    chdir: "/tmp/curl-8.4.0"
 
 - name: export | uthash env uthash variable to agent .bashrc.
   lineinfile: dest=/root/.bashrc line='export LIB_UTHASH=/usr/local/src/uthash'

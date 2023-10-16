@@ -77,8 +77,8 @@ ngx_devel_kit_file_path: "{{ software_files_path }}/{{ ngx_devel_kit_file_name }
 
 lua21filepath: "{{ software_files_path }}/{{ lua21filename }}"
 
-curlFileUrl: "https://curl.se/download/curl-7.78.0.tar.gz"
-curlfilename: "curl-7.78.0.tar.gz"
+curlFileUrl: "https://curl.se/download/curl-8.4.0.tar.gz"
+curlfilename: "curl-8.4.0.tar.gz"
 curlfilepath: "{{ software_files_path }}/{{ curlfilename }}"
 
 WAFfilename: "ngx_waf-8.0.3.tar.gz"
