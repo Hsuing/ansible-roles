@@ -1,0 +1,7 @@
+---
+# author: hanxiong
+- name: configure | Setup crictl config.
+  template:
+    dest: "/etc/crictl.yaml"
+    mode: 0644
+    src: crictl.yaml.j2

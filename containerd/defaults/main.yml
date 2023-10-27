@@ -1,0 +1,17 @@
+---
+# author: hanxiong
+
+software_files_path: "/opt/software"
+nerdctl_version: "1.6.2"
+nerdctl_name: "nerdctl-{{ nerdctl_version }}-linux-amd64.tar.gz"
+nerdctl_name_path: "{{ software_files_path}}/{{ nerdctl_name }}"
+nerdctl_url: "https://github.com/containerd/nerdctl/releases/download/v{{ nerdctl_version }}/{{ nerdctl_name}}"
+
+libseccomp_name: "libseccomp-2.5.1-1.el8.x86_64.rpm"
+libseccomp_name_path: "{{ software_files_path}}/{{ libseccomp_name }}"
+libseccomp_url: "http://rpmfind.net/linux/centos/8-stream/BaseOS/x86_64/os/Packages/{{ libseccomp_name}}"
+
+containerd_version: "v1.7.7"
+containerd_name: "cri-containerd-cni-1.7.7-linux-amd64.tar.gz"
+containerd_name_path: "{{ software_files_path }}/{{ containerd_name }}"
+containerd_url: "https://github.com/containerd/containerd/releases/download/{{ containerd_version }}/{{ containerd_name }}"

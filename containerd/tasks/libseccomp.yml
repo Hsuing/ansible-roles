@@ -1,0 +1,38 @@
+---
+# author: hanxiong
+- name: install | create {{ software_files_path }} path
+  file: path={{ software_files_path }} state=directory
+
+- name: install | Check if libseccomp local file is already configured.
+  stat: path={{ libseccomp_name_path }}
+  connection: local
+  register: libseccomp_file_result
+
+- name: install | Download {{ libseccomp_url }} file.
+  get_url: url={{ libseccomp_url }} dest={{ software_files_path }} validate_certs=false
+  connection: local
+  when: not libseccomp_file_result.stat.exists
+
+- name: copy {{ libseccomp_name }} to agent.
+  copy:
+    src: "{{ software_files_path }}/{{ libseccomp_name }}"
+    dest: "/tmp/libseccomp-2.5.1-1.el8.x86_64.rpm"
+
+- block:
+    - name: remove | libseccomp-2.3.1-4.el7.x86_64 file.
+      yum: name = {{ item }} state=removed
+      with_items:
+        - libseccomp-2.3.1-4.el7.x86_64
+      when: ansible_distribution == "CentOS" and ansible_distribution_major_version == "7"
+
+- name: install | {{ libseccomp_name }} file.
+  yum:
+    name: /tmp/libseccomp-2.5.1-1.el8.x86_64.rpm
+    state: present
+
+- name: check | libseccomp version.
+  shell: rpm -qa |grep libseccomp
+  ignore_errors: true
+  register: check_libseccomp_result
+- name: debug
+  debug: var=check_libseccomp_result

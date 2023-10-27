@@ -1,0 +1,78 @@
+---
+# author: hanxiong
+- name: install | create {{ software_files_path }} path
+  file: path={{ software_files_path }} state=directory
+
+- name: install | Check if containerd local file is already configured.
+  stat: path={{ containerd_name_path }}
+  connection: local
+  register: containerd_file_result
+
+- name: install | Download {{ containerd_url }} file.
+  get_url: url={{ containerd_url }} dest={{ software_files_path }} validate_certs=false
+  connection: local
+  when: not containerd_file_result.stat.exists
+
+- block:
+  - name: copy {{ containerd_name }} to agent.
+    unarchive:
+      src: "{{ software_files_path }}/{{ containerd_name }}"
+      dest: "/tmp/"
+    when:  ansible_architecture == "x86_64"
+  - name: "copy | containerd bin to agent."
+    copy:
+      src: "/tmp/usr/local/{{ item }}"
+      dest: /usr/local/bin/
+      mode: '0755'
+    with_items:
+    - 'bin/ctr'
+    - 'bin/crictl'
+    - 'bin/critest'
+    - 'bin/ctd-decoder'
+    - 'bin/containerd'
+    - 'bin/containerd-stress'
+    - 'bin/containerd-shim'
+    - 'bin/containerd-shim-runc-v1'
+    - 'bin/containerd-shim-runc-v2'
+    - 'sbin/runc'
+  - name: "copy | cni bin to agent."
+    copy:
+      src: "/tmp/opt/cni/{{ item }}"
+      dest: /opt/cni/bin/
+      remote_src: true
+      mode: '0755'
+    with_items:
+    - 'bin/bandwidth'
+    - 'bin/bridge'
+    - 'bin/dhcp'
+    - 'bin/dummy'
+    - 'bin/firewall'
+    - 'bin/host-device'
+    - 'bin/host-local'
+    - 'bin/ipvlan'
+    - 'bin/loopback'
+    - 'bin/macvlan'
+    - 'bin/portmap'
+    - 'bin/ptp'
+    - 'bin/sbr'
+    - 'bin/tuning'
+    - 'bin/vlan'
+
+- name: configure | Setup containerd config.
+  template:
+    dest: "/etc/containerd/config.toml"
+    mode: 0644
+    src: config.toml.j2
+
+- block: 
+  - name: configure | Setup systemd containerd service.
+    template:
+      dest: "/usr/lib/systemd/system/containerd.service"
+      mode: 0644
+      src: containerd.service.j2
+  - name: systemd reload
+    shell: "systemctl daemon-reload"
+  - name: "configure | Ensure containerd is running for centos7."
+    systemd: "name=containerd state=started enabled=true"
+    ignore_errors: true
+  when: ansible_distribution == "CentOS" and ansible_distribution_major_version == "7"

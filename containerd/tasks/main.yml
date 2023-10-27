@@ -1,0 +1,8 @@
+---
+# tasks file for roles/containerd
+# author: hanxiong
+- include: yum.yml
+- include: libseccomp.yml
+- include: containerd.yml
+- include: clientTools.yml
+- include: nerdctl.yml

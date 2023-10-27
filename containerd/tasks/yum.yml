@@ -1,0 +1,8 @@
+- name: install | Ensure gcc packages are installed.
+  package:
+    name: "{{ item }}"
+    state: installed
+  with_items:
+    - device-mapper-persistent-data
+    - lvm2
+    - bash-completion

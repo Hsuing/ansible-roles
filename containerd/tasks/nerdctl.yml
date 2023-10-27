@@ -1,0 +1,32 @@
+---
+# author: hanxiong
+- name: install | create {{ software_files_path }} path
+  file: path={{ software_files_path }} state=directory
+
+- name: install | Check if nerdctl local file is already configured.
+  stat: path={{ nerdctl_name_path }}
+  connection: local
+  register: nerdctl_file_result
+
+- name: install | Download {{ nerdctl_url }} file.
+  get_url: url={{ nerdctl_url }} dest={{ software_files_path }} validate_certs=false
+  connection: local
+  when: not nerdctl_file_result.stat.exists
+
+- name: copy nerdctl-{{ nerdctl_version }} to agent.
+  block:
+  - name: copy nerdctl
+    unarchive:
+      src: "{{ software_files_path }}/{{ nerdctl_name }}"
+      dest: "/tmp"
+  - name: install | nerdctl to agent.
+    copy:
+      src: "/tmp/nerdctl"
+      dest: /usr/local/bin/
+      remote_src: true
+      mode: 0755
+
+#- name: "clean | packages"
+#  file: 
+#    name: "{{ containerd_file_dir }}"
+#    state: absent
