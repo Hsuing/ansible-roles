@@ -1,0 +1,144 @@
+---
+# author: hanxiong
+- name: Load common variables
+  ansible.builtin.include_vars:
+    file: "main.yml"
+  tags:
+    - docker
+
+- name: Gather the package facts
+  ansible.builtin.package_facts:
+    manager: auto
+
+
+
+- name: Create | docker group
+  ansible.builtin.group:
+    name: "{{ docker_group }}"
+    gid: "{{ docker_gid }}"
+    state: present
+  tags:
+    - docker
+
+- name: Create | docker user.
+  ansible.builtin.user:
+    name: "{{ docker_user }}"
+    uid: "{{ docker_uid }}"
+    group: "{{ docker_group }}"
+    shell: /usr/sbin/nologin
+  tags:
+    - docker
+
+- name: Create | download directory.
+  ansible.builtin.file:
+    path: "{{ docker_download_dir }}"
+    state: directory
+    mode: 0750
+  tags:
+    - docker
+
+- name: Register | docker binary is installed
+  ansible.builtin.stat:
+    path: "{{ docker_bin_dir }}/docker"
+  connection: local
+  register: docker_bin_stat
+  tags:
+    - docker
+
+- name: Downloading | official Docker binaries archive.
+  ansible.builtin.get_url:
+    url: "https://download.docker.com/linux/static/stable/x86_64/docker-{{ docker_version }}.tgz"
+    dest: "{{ docker_download_dir }}/docker-{{ docker_version }}.tgz"
+    mode: 0640
+  connection: local
+  when: not docker_bin_stat.stat.exists
+  tags:
+    - docker
+
+- name: Copy | binaries zip to agent.
+  copy: 
+    src: "{{ docker_download_dir }}/docker-{{ docker_version }}.tgz"
+    dest: /tmp/
+
+- name: Unzip | downloaded Docker archive.
+  ansible.builtin.unarchive:
+    src: "/tmp/docker-{{ docker_version }}.tgz"
+    dest: "{{ docker_download_dir }}"
+    remote_src: true
+  when: not docker_bin_stat.stat.exists or (upgrade_docker is defined and upgrade_docker == "true")
+  tags:
+    - docker
+
+- name: Copy | Docker binaries to destination directory.
+  ansible.builtin.copy:
+    src: "{{ docker_download_dir }}/docker/{{ binary }}"
+    dest: "{{ docker_bin_dir }}/{{ binary }}"
+    mode: 0755
+    owner: root
+    group: root
+    remote_src: true
+  notify:
+    - Restart docker
+  loop: "{{ docker_binaries }}"
+  loop_control:
+    loop_var: "binary"
+  tags:
+    - docker
+
+- name: Combine dockerd_settings and dockerd_settings_user (if defined)
+  ansible.builtin.set_fact:
+    dockerd_settings: "{{ dockerd_settings | combine(dockerd_settings_user | default({})) }}"
+  tags:
+    - docker
+
+- name: Create | remote dir to agent.
+  file:
+    path: /etc/docker
+    state: directory
+
+- name: Copy | daemon.json to agent.
+  ansible.builtin.template:
+    src: daemon.json.j2
+    dest: /etc/docker/daemon.json
+    owner: root
+    group: root
+    mode: 0644
+  tags:
+    - docker
+
+- name: Create docker.socket systemd file
+  ansible.builtin.template:
+    src: docker.socket.j2
+    dest: /etc/systemd/system/docker.socket
+    owner: root
+    group: root
+    mode: 0644
+  notify:
+    - Reload systemd
+    - Restart docker
+  tags:
+    - docker
+
+- name: Create docker.service systemd file
+  ansible.builtin.template:
+    src: docker.service.j2
+    dest: /etc/systemd/system/docker.service
+    owner: root
+    group: root
+    mode: 0644
+  notify:
+    - Reload systemd
+    - Restart docker
+  tags:
+    - docker
+
+- name: Flush handlers
+  ansible.builtin.meta: flush_handlers
+
+- name: Enable and start Docker
+  ansible.builtin.service:
+    name: docker
+    enabled: true
+    state: started
+  tags:
+    - docker

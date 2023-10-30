@@ -1,0 +1,37 @@
+---
+# author: hanxiong
+docker_download_dir: "/opt/software"
+
+# Docker version to download and use.
+docker_version: "20.10.24"
+docker_user: "docker"
+docker_group: "docker"
+docker_uid: 666
+docker_gid: 666
+
+# Directory to store Docker binaries. Should be in your search PATH!
+docker_bin_dir: "/usr/local/bin"
+
+# Possible values:
+# - iptables # Possible for all supported OSes
+docker_firewall_flavor: "iptables"
+
+# Settings for "dockerd" daemon. Will be provided as parameter to "dockerd" in
+# systemd service file for Docker. These variables and it's values can be
+# overridden with `dockerd_settings_user` variable. Also additional variables
+# can be added of course. For possible values see:
+# https://docs.docker.com/engine/reference/commandline/dockerd/#daemon
+dockerd_settings:
+  "host": "unix:///run/docker.sock"
+  "log-level": "info"
+  "iptables": "true"
+  "ip-masq": "true"
+  "mtu": "1500"
+
+# To override settings defined in `dockerd_settings` this variable can be
+# used. Of course additional variables can be added too. The example below
+# would add the "--debug=true" switch to `dockerd` e.g. For possible values
+# see:
+# https://docs.docker.com/engine/reference/commandline/dockerd/#daemon
+# dockerd_settings_user:
+#   "debug": "true"
