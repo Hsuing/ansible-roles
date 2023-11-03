@@ -3,6 +3,11 @@
     name: "{{ item }}"
     state: installed
   with_items:
+    - bison
+    - flex
+    - lz4
+    - lz4-devel
+    - systemtap-sdt-devel
     - gcc
     - llvm5.0
     - llvm5.0-devel
@@ -10,6 +15,9 @@
     - clang
     - libicu-devel
     - perl-ExtUtils-Embed
+    - perl-ExtUtils-MakeMaker
+    - pam
+    - pam-devel
     - readline
     - readline-devel
     - zlib
@@ -17,10 +25,13 @@
     - openssl
     - openssl-devel
     - pam-devel
+    - libxml2
     - libxml2-devel
+    - libxslt
     - libxslt-devel
     - openldap-devel
     - systemd-devel
+    - tcl
     - tcl-devel
     - python-devel
   ignore_errors: yes

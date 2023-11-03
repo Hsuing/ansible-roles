@@ -17,50 +17,22 @@
   unarchive:
     src: "{{ pg_download_path }}/{{ pg_name }}"
     dest: "/tmp/"
-    creates: "/tmp/postgresql-12.2"
+    creates: "/tmp/postgresql-{{ name_version }}"
 
 - name: install | Build an install src/pg.
   shell: "{{ item }}"
   with_items:
     - "{{ pg_configure_command }}"
-    - make && make install
+    - gmake world && gmake install-world
   args:
-    chdir: "/tmp/postgresql-12.2"
-
-- name: install | Build an install pg_stat_statements.
-  shell: "{{ item }}"
-  with_items:
-    - make && make install
-  args:
-    chdir: "/tmp/postgresql-12.2/contrib/pg_stat_statements"
-
-- name: install | Build an install passwordcheck
-  shell: "{{ item }}"
-  with_items:
-    - make && make install
-  args:
-    chdir: "/tmp/postgresql-12.2/contrib/passwordcheck"
-
-- name: install | Build an install auth_delay
-  shell: "{{ item }}"
-  with_items:
-    - make && make install
-  args:
-    chdir: "/tmp/postgresql-12.2/contrib/auth_delay"
-
-- name: install | Build an install auto_explain 
-  shell: "{{ item }}"
-  with_items:
-    - make && make install
-  args:
-    chdir: "/tmp/postgresql-12.2/contrib/auto_explain"
+    chdir: "/tmp/postgresql-{{ name_version }}"
 
 - name: disabled selinux.
   shell: "/sbin/setenforce 0"
   ignore_errors: True
 
 - name: export | pg variable to agent .bashrc.
-  shell: "echo 'export PATH=/data/apps/pgsql/12/bin:$PATH' >/etc/profile.d/pgsql.sh"
+  shell: "echo 'export PATH=/data/apps/pgsql/{{ version }}/bin:$PATH' >/etc/profile.d/pgsql.sh"
 
 - name: configure | Setup postgresql.service file.
   template:

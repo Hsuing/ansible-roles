@@ -1,11 +1,12 @@
 ---
 # author: hanxiong
-version: "12"
+version: "16"
+name_version: "16.0" 
 
 pg_download_path: "/opt/software"
 
-pg_url: "https://ftp.postgresql.org/pub/source/v12.2"
-pg_name: "postgresql-12.2.tar.gz"
+pg_url: "https://ftp.postgresql.org/pub/source/v{{ name_version }}"
+pg_name: "postgresql-16.0.tar.gz"
 pg_name_path: "{{ software_files_path}}/{{ openssl_name }}"
 
 pg_software_install_path: "/data/apps/pgsql/{{ version }}"
@@ -22,7 +23,7 @@ pg_configure_command: >
   ./configure
   --prefix={{ pg_software_install_path }}
   --enable-nls
-  --with-python
+  --without-python
   --with-tcl
   --with-gssapi
   --with-icu
@@ -31,11 +32,16 @@ pg_configure_command: >
   --with-ldap
   --with-systemd
   --with-libxml
+  --with-lz4
   --with-libxslt
+  --with-perl
   --enable-thread-safety
   --with-wal-blocksize=8
   --with-blocksize=8
   --with-segsize=10
   --with-pgport={{ pg_port }}
   --enable-dtrace
+  --enable-depend
+  --enable-cassert
+  --enable-debug
   {{ pg_build_options }}
