@@ -5,7 +5,7 @@ name_version: "16.0"
 
 pg_download_path: "/opt/software"
 
-pg_url: "https://ftp.postgresql.org/pub/source/v{{ name_version }}"
+pg_url: "https://ftp.postgresql.org/pub/source/v{{ name_version }}.tar.gz"
 pg_name: "postgresql-16.0.tar.gz"
 pg_name_path: "{{ software_files_path}}/{{ openssl_name }}"
 

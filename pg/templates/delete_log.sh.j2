@@ -1,0 +1,16 @@
+reserved_num=10  #保留文件数
+file_dir=/data/pgdata/data/log
+date=$(date "+%Y-%m-%d")
+
+cd $file_dir   #进入备份目录
+file_num=$(ls -l | wc -l)   #当前有几个文件夹，即几个备份
+
+while(( $file_num > $reserved_num ))
+do
+    old_file=$(ls -rt | head -1)         #获取最旧的那个备份文件夹
+    echo  $date "Delete File:"$old_file
+    rm -f "${file_dir}/$old_file"
+    let "file_num--"
+done 
+
+ls -l $file_dir

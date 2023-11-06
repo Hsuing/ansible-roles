@@ -1,0 +1,18 @@
+#!/bin/bash
+export PGHOME=/data/apps/pgsql/12
+export PGPORT=5532
+export PGDATA=/data/pgdata/data
+export PATH=$PGHOME/bin:$PATH
+
+# database user
+PGIP=127.0.0.1
+PORT=5532
+PGUSER_NAME=postgres
+
+PG_WAL_NUM=`pg_controldata $PGDATA |head |grep "WAL file"|awk -F':' '{print $2}'`
+if [ ${PG_WAL_NUM} == "" ]
+then
+	exit 1
+else
+	pg_archivecleanup -d ${PGDATA}/pg_wal ${PG_WAL_NUM} > /dev/null 2>&1
+fi

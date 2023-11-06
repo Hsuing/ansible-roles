@@ -1,0 +1,16 @@
+create user operatingapiuser with password 'geniff61';
+
+create database operatingapi owner operatingapiuser;
+
+grant all privileges on database operatingapi to operatingapiuser;
+
+
+#授权只读
+\c dbname ;
+GRANT SELECT ON ALL TABLES IN SCHEMA public TO gendanuser ;
+
+
+#back database
+ pg_dump -U postgres -h 127.0.0.1 -p 5532 -d fllowordersystem  --no-owner --no-tablespaces --no-privileges >fll.sql
+ 
+ pg_dump -U postgres -h 127.0.0.1 -p 5532  -t fllowordersetting fllowordersystem  --no-owner --no-tablespaces --no-privileges >fllowordersetting.sql
