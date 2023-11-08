@@ -1,3 +1,4 @@
+#https://pgtune.leopard.in.ua/
 listen_addresses = '*'
 port = 5532
 max_connections = 3000
@@ -44,7 +45,7 @@ unix_socket_permissions = 0700
 
 shared_buffers = 2048MB
 temp_buffers = 16MB
-work_mem = 3048MB
+work_mem = 349kB
 effective_cache_size = 2GB
 maintenance_work_mem = 128MB
 #max_stack_depth = 2MB
@@ -55,7 +56,7 @@ commit_siblings = 5
 
 ################# wal ####################
 checkpoint_timeout = 60min
-checkpoint_completion_target = 0.5
+checkpoint_completion_target = 0.9
 wal_level = logical
 max_wal_size = 1GB
 min_wal_size = 128MB
