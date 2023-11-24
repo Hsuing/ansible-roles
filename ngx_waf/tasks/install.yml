@@ -33,18 +33,18 @@
 - name: install | Create nginx work Directory.
   file: path={{ item }} state=directory owner={{ nginx_user }} group={{ nginx_group }}
   with_items:
-   - "{{ software_install_path }}/nginx"
-   - "{{ nginx_temp_path }}/client"
-   - "{{ nginx_logpath }}"
+    - "{{ software_install_path }}/nginx"
+    - "{{ nginx_temp_path }}/client"
+    - "{{ nginx_logpath }}"
 
 - name: install | Check if nginx bin file is already configured.
   stat: path={{ software_install_path }}/sbin/nginx
   register: nginx_bin_result
 
 - name: install | export Lua lib.
-  shell: "export LUAJIT_LIB=/data/apps/luajit2/lib" 
+  shell: "export LUAJIT_LIB=/data/apps/luajit2/lib"
 - name: install | export Lua2 lib.
-  shell: "export LUAJIT_INC=/data/apps/luajit2/include/luajit-2.1" 
+  shell: "export LUAJIT_INC=/data/apps/luajit2/include/luajit-2.1"
 
 - name: install | Build an install nginx.
   shell: "{{ item }}" 
