@@ -34,11 +34,10 @@ if ($query_string ~* (\$|'|--|[+|(%20)]union[+|(%20)]|[+|(%20)]insert[+|(%20)]|[
  if ($query_string ~ "b(erections|hoodia|huronriveracres|impotence|levitra|libido)b") {return 507; }
  if ($query_string ~ "b(ambien|bluespill|cialis|cocaine|ejaculation|erectile)b") { return 507; }
  if ($query_string ~ "b(lipitor|phentermin|pro[sz]ac|sandyauer|tramadol|troyhamby)b") { return 507; }
-if ($http_user_agent ~* LWP::Simple|BBBike|wget) {
-    return 444;
-}
- if ($http_user_agent ~* ApacheBench|WebBench|Jmeter|JoeDog|Havij|GetRight|TurnitinBot|GrabNet|masscan|mail2000|github|wget|curl|Java|python|php|http_load) { return 444; }
+
+if ($http_user_agent ~* LWP::Simple|BBBike|ApacheBench|WebBench|perl|ruby|nmap|scan|httpclient|httprequest|concat|select|md5sum|bash|echo|uname|base64|decode|Jmeter|java|JoeDog|Havij|GetRight|TurnitinBot|GrabNet|masscan|mail2000|github|wget|python|php|http_load|Go-http-client) { return 444; }
  if ($http_user_agent ~* "Go-Ahead-Got-It") { return 444; }
+ if ($http_user_agent ~* "Go-http-client") { return 444; }
  if ($http_user_agent ~* "GetWeb!") { return 444; }
  if ($http_user_agent ~* "Go!Zilla") { return 444; }
  if ($http_user_agent ~* "Download Demon") { return 444; }
@@ -47,23 +46,46 @@ if ($http_user_agent ~* LWP::Simple|BBBike|wget) {
  if ($http_user_agent ~* "Nmap Scripting Engine") { return 444; }
  if ($http_user_agent ~* "~17ce.com") { return 444; }
  if ($http_user_agent ~* "WebBench*") { return 444; }
-#禁止空user-agent
-if ( $http_user_agent ~ ^$) { 
-   return 444;
-}
-location  /msdn.cpp { return 444; }
-location  /cgi-bin { return 444; }
+ if ($http_user_agent ~* "PostmanRuntime*") { return 444; }
+ if ($http_user_agent ~* "Fiddler*") { return 444; }
+ if ($http_user_agent ~* "nuclei*") { return 444; }
+ if ($http_user_agent ~* "okhttp*") { return 444; }
+  if ($http_user_agent ~* "axios*") { return 444; }
 
-location ~* \.(jsp|doc|php|shell|exe|cgi|cpp|perl|py|asp|cgi|sh|bash)$ {
+#屏蔽非常见蜘蛛
+if ($http_user_agent ~* (SemrushBot|python|MJ12bot|AhrefsBot|AhrefsBot|hubspot|opensiteexplorer|leiki|webmeup)) {
+     return 444;
+}
+## Only requests to our Host are allowed i.e. nixcraft.in, images.nixcraft.in and www.nixcraft.in
+if ($host !~ ^(nixcraft.in|www.nixcraft.in|images.nixcraft.in)$ ) {
+    return 444;
+}
+
+if ($http_user_agent ~ "Mozilla/4.0\ \(compatible;\ MSIE\ 6.0;\ Windows\ NT\ 5.1;\ SV1;\ .NET\ CLR\ 1.1.4322;\ .NET\ CLR\ 2.0.50727\)") { 
+   return 404;
+}
+
+if ($request_uri ~ " ") {
+         return 444;
+}
+if ($http_range ~ "d{9,}") {
+        return 444;
+}
+if ($http_referer = "" ) {
+    return 444;
+}
+
+
+
+#禁止空user-agent
+location  /msdn.cpp { return 444; }
+location  /cgi-bin/ { return 444; }
+
+location ~* \.(ddl|xml|doc|php|asp|aspx|jsp|shell|exe|cgi|cpp|perl|py|asp|cgi|sh|bash)$ {
    return 444;
 }
 
 location ~* .*.(svn|git|cvs|gitignore) {
-   return 444;
-}
-
-
-location ~ /cron/*\.(php|php5)?$ { 
    return 444;
 }
 
@@ -75,12 +97,21 @@ location ~* ^/data/(attachment|avatar)/.*\.(php|php5)$ {
         return 444;
 }
 
+location = /favicon.ico { access_log off; log_not_found off; }
+
 #deny download
-location ~ \.(rar|sql|bak|gz|7z)$ {  
-   return 444;     
+location ~ \.(zip|rar|sql|bak|gz|7z)$ {  
+    return 444;     
 }
 
 location ~ .*\.(?:htm|html)$ {
- 	add_header Cache-Control "private, no-store, no-cache, must-revalidate, proxy-revalidate";
+	add_header Cache-Control "private, no-store, no-cache, must-revalidate, proxy-revalidate";
 }
 
+
+if ($geoip2_data_country_name != China){
+    return 444;
+}
+if ($geoip2_data_country_code != CN) {
+    return 444;
+}
