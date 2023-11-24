@@ -1,5 +1,5 @@
 ---
-# author: hanxiong
+#  author: hanxiong
 company_name: "ufun"
 kcoin_apps_name: "apps"
 redis_data_name_path: "ufun_data"
