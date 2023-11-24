@@ -1,0 +1,22 @@
+[Unit]
+Description=rabbitmq
+After=network.target
+ 
+[Service]
+User={{ rabbitmq_user }}
+Group={{ rabbitmq_user }}
+
+Type=forking
+ExecStart={{ software_install_path }}/rabbitmq/sbin/rabbitmq-server -detached
+ExecStop={{ software_install_path }}/rabbitmq/sbin/rabbitmqctl stop
+PrivateTmp=true
+
+LimitNOFILE=65535
+# Disable OOM kill on the postmaster
+OOMScoreAdjust=-1000
+
+# Give a reasonable amount of time for the server to start up/shut down
+TimeoutSec=600
+
+[Install]
+WantedBy=multi-user.target

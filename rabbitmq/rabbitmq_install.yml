@@ -1,8 +1,8 @@
-- hosts: bw
+- hosts: bitgood
   vars:
-   - rabbitmq_version: 3.9.7
+   - rabbitmq_version: 3.9.27
    - rabbitmq_plugins: ['rabbitmq_top', 'rabbitmq_mqtt']
-   - rabbitmq_server_users: [{user: 'admin', pass: 'ad456ad', role: 'administrator'}]
+   - rabbitmq_server_users: [{user: 'admin', pass: 'ad45good6ad', role: 'administrator'}]
   roles:
    - erlang 
    - rabbitmq

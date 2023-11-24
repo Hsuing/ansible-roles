@@ -28,9 +28,8 @@
 - name: modify rabbitmq name .
   shell: mv "{{ software_install_path}}/rabbitmq_server-{{ rabbitmq_version }}" "{{ software_install_path}}/rabbitmq"
     
-- name: "install | Create {{ rabbitmq_user }} group."
-  group: name={{ rabbitmq_user }}
+#- name: "install | Create {{ rabbitmq_user }} group."
+#  group: name={{ rabbitmq_user }}
 
-- name: "install | Create {{ rabbitmq_user }} user."
-  user: name={{ rabbitmq_user }} group={{ rabbitmq_user }} shell=/sbin/nologin
-  
+#- name: "install | Create {{ rabbitmq_user }} user."
+#  user: name={{ rabbitmq_user }} group={{ rabbitmq_user }} shell=/sbin/nologin

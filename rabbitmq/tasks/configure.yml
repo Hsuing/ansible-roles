@@ -12,8 +12,8 @@
  
 - name: configure | Copy rabbitmq init.d script.
   template:
-    src: "rabbitmq-server.sh.j2"
-    dest: "/etc/rc.d/init.d/rabbitmq-server"
+    src: "rabbitmq.service.j2"
+    dest: "/lib/systemd/system/rabbitmq.service"
     mode: 0755
     
 - name: configure | Setup hosts.
@@ -26,7 +26,7 @@
     src: rabbitmq-env.conf.j2
 
 - name: configure | Add rabbitmq-server services.
-  shell: "chkconfig --add rabbitmq-server && chkconfig rabbitmq-server on"
+  shell: "systemctl enable rabbitmq"
 
 - name: configure | Enable rabbitmq plugins.
   command: "{{ software_install_path }}/rabbitmq/sbin/rabbitmq-plugins enable {{ item  }}"

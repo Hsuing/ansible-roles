@@ -41,10 +41,11 @@
     - openssl
     - openssl-devel
     - ncurses-devel
+    - socat
   when: not erlang_bin_file_result.stat.exists
 
 - name: Build an install erlang.
-  shell: "./configure --prefix={{ software_install_path }}/{{ erlang_name }} && make && make install" 
+  shell: "./configure --prefix={{ software_install_path }}/{{ erlang_name }} --enable-smp-support --enable-threads --enable-sctp --enable-kernel-poll --enable-hipe --with-ssl && make -j `grep -c '^processor' /proc/cpuinfo` && make install" 
   args:
     chdir: "/tmp/otp_src_{{ erlang_version }}"
   when: not erlang_bin_file_result.stat.exists

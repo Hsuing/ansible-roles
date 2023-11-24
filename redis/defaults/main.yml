@@ -7,7 +7,7 @@ redis_data_name_path: "ufun_data"
 software_files_path: "/opt/software"
 software_install_path: "/data/{{ kcoin_apps_name }}"
 
-redis_version: "5.0.7"
+redis_version: "6.2.14"
 
 redis_file: "redis-{{ redis_version }}.tar.gz"
 redis_file_path: "{{ software_files_path }}/{{ redis_file }}"
