@@ -72,6 +72,15 @@ geoip2 /data/apps/nginx/geoip/maxmind-city.mmdb {
     $geoip2_data_province_isocode subdivisions 0 iso_code;
 }
 
+geoip2 /data/apps/nginx/geoip/maxmind-city.mmdb {
+      $geoip2_data_country_name country names en;
+      $geoip2_data_country_code default=USsource=$http_x_forwarded_for country iso_code;
+      $geoip2_data_city_name city names en;
+      $geoip2_data_province_isocode subdivisions 0 iso_code;
+      $geoip2_continent_code continent code;
+}
+
+
 #country
 #geoip2 /data/apps/nginx/geoip/GeoLite2-Country.mmdb {
 #          $geoip2_country_code country iso_code;
@@ -85,8 +94,9 @@ geoip2 /data/apps/nginx/geoip/maxmind-city.mmdb {
 #log_format es '$server_addr`$host`$remote_addr`$http_x_forwarded_for`$time_local`$request_uri`$request_length`$bytes_sent`$request_time`$status`$upstream_addr`$upstream_cache_status`$upstream_response_time`$request_method`$http_user_agent`$upstream_status`$geoip2_country_code';
 
 
-log_format es '$server_addr`$host`$remote_addr`$http_x_forwarded_for`$time_local`$request_uri`$request_length`$bytes_sent`$request_time`$status`$upstream_addr`$upstream_cache_status`$upstream_response_time`$request_method`$http_user_agent`$upstream_status`$http_referer`$geoip2_data_city_name`$geoip2_data_subdivisions_name`$geoip2_data_country_name`$geoip2_data_country_code';
+#log_format es '$server_addr`$host`$remote_addr`$http_x_forwarded_for`$time_local`$request_uri`$request_length`$bytes_sent`$request_time`$status`$upstream_addr`$upstream_cache_status`$upstream_response_time`$request_method`$http_user_agent`$upstream_status`$http_referer`$geoip2_data_city_name`$geoip2_data_subdivisions_name`$geoip2_data_country_name`$geoip2_data_country_code';
 
+log_format es '$server_addr`$host`$remote_addr`$http_x_forwarded_for`$time_local`$request_uri`$request_length`$bytes_sent`$request_time`$status`$upstream_addr`$upstream_cache_status`$upstream_response_time`$request_method`$http_user_agent`$upstream_status`$geoip2_data_city_name`$geoip2_data_country_name`$geoip2_data_country_code';
 
 #loki
 log_format json_analytics '{'
