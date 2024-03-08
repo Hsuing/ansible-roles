@@ -1,7 +1,7 @@
 #https://pgtune.leopard.in.ua/
 listen_addresses = '*'
 port = 5532
-max_connections = 3000
+max_connections = 500
 superuser_reserved_connections = 10
 full_page_writes = on
 max_files_per_process = 2048000
@@ -45,7 +45,7 @@ unix_socket_permissions = 0700
 
 shared_buffers = 2048MB
 temp_buffers = 16MB
-work_mem = 349kB
+work_mem = 16MB
 effective_cache_size = 2GB
 maintenance_work_mem = 128MB
 #max_stack_depth = 2MB
@@ -62,14 +62,17 @@ max_wal_size = 1GB
 min_wal_size = 128MB
 archive_mode = on
 archive_timeout = 60s
-#wal_keep_segments = 2048
+archive_command = 'test ! -f /data/pgdata/archivedir/%f && cp %p /data/pgdata/archivedir/%f'
+restore_command='cp /data/pgdata/archivedir/%f %p'
+recovery_target_timeline='latest
+
 wal_keep_size = 65536
 wal_sender_timeout = 60s
 wal_buffers = 16MB
 wal_writer_delay = 200ms
 wal_log_hints = on
 wal_compression = on
-archive_command = 'test ! -f /data/pgdata/archivedir/%f && cp %p /data/pgdata/archivedir/%f'
+
 
 
 #################### vacuum #####################
@@ -80,8 +83,8 @@ autovacuum_vacuum_cost_limit = 4000
 ############### master-slave ##############
 wal_level = hot_standby
 #hot_standby = on
-max_wal_senders = 50 
-
+max_wal_senders = 20 
+wal_keep_segments = 64
 
 ################ sync #####################
 synchronous_commit = on
