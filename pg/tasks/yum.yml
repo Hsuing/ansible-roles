@@ -63,5 +63,7 @@
     - tcl-devel
     - python3-devel
     - python3
+    - lz4
+    - lz4-devel
   ignore_errors: yes
   when: ansible_distribution == "CentOS" and ansible_distribution_major_version == "8"
