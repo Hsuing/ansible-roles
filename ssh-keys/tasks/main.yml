@@ -3,39 +3,50 @@
 
 - name: Make sure the .ssh directory exists.
   file: path=~/.ssh state=directory
+  connection: local
 
 - name: Generate SSH keys.
   shell: ssh-keygen -b 2048 -t rsa -f ~/.ssh/id_rsa -q -N ""
   args:
     creates: ~/.ssh/id_rsa
   when: ((ssh_keys_host is defined and ansible_default_ipv4.address == ssh_keys_host) or (ssh_keys_host is undefined))
+  connection: local
 
 - name: Fetch public ssh keys.
   shell: cat ~/.ssh/id_rsa.pub
   register: ssh_keys
   when: ((ssh_keys_host is defined and ansible_default_ipv4.address == ssh_keys_host) or (ssh_keys_host is undefined))
+  connection: local
 
 - name: Make sure the running hostname exists in /etc/hosts.
   lineinfile: "path=/etc/hosts line='{{ansible_default_ipv4.address}} {{ ansible_hostname }}'"
   delegate_to: "{{ item }}"
   with_items:
-   - "{{ play_hosts | symmetric_difference([ansible_default_ipv4.address]) }}"
+    - "{{ play_hosts | symmetric_difference([ansible_default_ipv4.address]) }}"
+#   register: linehosts
+# - debug: var=linehosts
 
 - name: Make sure that the running host exists in ~/.ssh/known_hosts.
   shell: "ssh-keyscan -t rsa {%if hostvars[ansible_default_ipv4.address].ansible_hostname != 'localhost' %} {{ hostvars[ansible_default_ipv4.address].ansible_hostname }},{%endif%}{{ ansible_default_ipv4.address }} >> ~/.ssh/known_hosts" 
   delegate_to: "{{ item }}"
   with_items:
-   - "{{ play_hosts | symmetric_difference([ansible_default_ipv4.address]) }}"
+    - "{{ play_hosts | symmetric_difference([ansible_default_ipv4.address]) }}"
   when: ((ssh_keys_host is defined and ansible_default_ipv4.address != ssh_keys_host) or (ssh_keys_host is undefined))
+#   register: linehosts
+# - debug: var=linehosts
 
+- name: Close remote ssh connection warning.
+  shell: sed -i "s/^.*StrictHostKeyChecking.*$/   StrictHostKeyChecking no/g" /etc/ssh/ssh_config
+  
 - name: Deploy keys on all servers.
   authorized_key: 
     user: "{{ ansible_user_id }}"
-    key: "{{ hostvars[item].ssh_keys.stdout }}"
+    key: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
     state: present
-  with_items:
-   - "{{ play_hosts | symmetric_difference([ansible_default_ipv4.address]) }}"
   when: ssh_keys_host is undefined
+#   register: linehosts
+# - debug: var=linehosts
+
 
 - name: "Deploy keys on all servers, but manger host is {{ ssh_keys_host | d('') }}."
   authorized_key:
