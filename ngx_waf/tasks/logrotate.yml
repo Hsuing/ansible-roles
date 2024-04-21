@@ -5,3 +5,6 @@
   template:
     dest: "/etc/logrotate.d/nginx"
     src: nginx.logrotate.j2
+
+- name: install | create nginx client log directory.
+  shell: "mkdir -p /var/tmp/nginx/client;chown nginx.nginx /var/tmp/nginx/client;chmod 755 /var/tmp/nginx/client"
