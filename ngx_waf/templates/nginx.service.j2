@@ -1,0 +1,19 @@
+[Unit]
+Description=nginx - high performance web server
+Documentation=http://nginx.org/en/docs/
+After=network-online.target remote-fs.target nss-lookup.target
+Wants=network-online.target
+[Service]
+Type=forking
+PIDFile=/var/run/nginx.pid
+ExecStartPre=/data/apps/nginx/sbin/nginx -t -c /data/apps/nginx/conf/nginx.conf
+ExecStart=/data/apps/nginx/sbin/nginx -c /data/apps/nginx/conf/nginx.conf
+ExecReload=/data/apps/nginx/sbin/nginx -s reload
+ExecStop=/data/apps/nginx/sbin/nginx -s stop
+KillSignal=SIGQUIT
+TimeoutStopSec=5
+KillMode=process
+PrivateTmp=false
+LimitNOFILE=65535
+[Install]
+WantedBy=multi-user.target
