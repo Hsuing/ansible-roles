@@ -34,6 +34,7 @@
     - tcl
     - tcl-devel
     - python-devel
+    - krb5-devel
   ignore_errors: yes
   #  when: ansible_distribution == "CentOS" and ansible_distribution_major_version == "7"
 
@@ -65,5 +66,6 @@
     - python3
     - lz4
     - lz4-devel
+    - krb5-devel
   ignore_errors: yes
   when: ansible_distribution == "CentOS" and ansible_distribution_major_version == "8"
