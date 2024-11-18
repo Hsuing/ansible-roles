@@ -23,6 +23,8 @@
   yum:
     name: "{{ item }}"
     state: installed
+  #vars:
+  #  ansible_python_interpreter: /usr/bin/python2
   with_items:
     - gcc
     - gcc-c++

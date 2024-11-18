@@ -44,14 +44,32 @@
     owner: "{{ redis_user }}"
     group: "{{ redis_user }}"
 
-- name: configure | Ensure Redis daemon shell is configured.
+- name: configure | Ensure Redis daemon shell is configured  for CentOS version 7.
   template:
     src: redis.sh.j2
     dest: "/etc/rc.d/init.d/{{ redis_daemon }}"
     mode: 0755
+  when: ansible_distribution == "CentOS" and ansible_distribution_major_version == "7"
 
-- name: configure | Add redis services.
+- name: configure | Add redis services for CentOS version 7.
   shell: "chkconfig --add {{ redis_daemon }}  && chkconfig {{ redis_daemon }} on"
+  when: ansible_distribution == "CentOS" and ansible_distribution_major_version == "7"
 
-- name: configure | Ensure Redis is running and enabled on boot.
+- name: configure | Ensure Redis is running and enabled on boot for CentOS  version 7.
   service: "name={{ redis_daemon }} state=started enabled=yes"
+  when: ansible_distribution == "CentOS" and ansible_distribution_major_version == "7"
+
+- name: configure | Ensure Redis daemon shell is configured  for {{ ansible_distribution }} version {{ ansible_distribution_version }}.
+  template:
+    src: redis.service.j2
+    dest: "/usr/lib/systemd/system/redis.service"
+    mode: 0755
+  when: ansible_distribution == "Rocky" and ansible_distribution_major_version == "9"
+
+- name: configure | Add redis services for Rocky version 9.
+  shell: "systemctl enable redis.service"
+  when: ansible_distribution == "Rocky" and ansible_distribution_major_version == "9"
+
+- name: configure | Ensure pg is running for Rocky version 9.
+  systemd: "name=redis state=started enabled=yes"
+  when: ansible_distribution == "Rocky" and ansible_distribution_major_version == "9"
