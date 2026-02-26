@@ -1,71 +1,71 @@
-- name: install | Ensure gcc packages are installed centos7.
-  package:
-    name: "{{ item }}"
-    state: installed
-  with_items:
-    - bison
-    - flex
-    - lz4
-    - lz4-devel
-    - systemtap-sdt-devel
-    - gcc
-    - llvm5.0
-    - llvm5.0-devel
-    - gcc-c++
-    - clang
-    - libicu-devel
-    - perl-ExtUtils-Embed
-    - perl-ExtUtils-MakeMaker
-    - pam
-    - pam-devel
-    - readline
-    - readline-devel
-    - zlib
-    - zlib-devel
-    - openssl
-    - openssl-devel
-    - pam-devel
-    - libxml2
-    - libxml2-devel
-    - libxslt
-    - libxslt-devel
-    - openldap-devel
-    - systemd-devel
-    - tcl
-    - tcl-devel
-    - python-devel
-    - krb5-devel
+- name: show system name version
+  debug:
+    msg: "this is system version, {{ ansible_distribution_major_version }}"
+- name: install | Ensure gcc packages are installed (EL7, yum).
+  yum:
+    name:
+      - bison
+      - flex
+      - lz4
+      - lz4-devel
+      - systemtap-sdt-devel
+      - gcc
+      - llvm5.0
+      - llvm5.0-devel
+      - gcc-c++
+      - clang
+      - libicu-devel
+      - perl-ExtUtils-Embed
+      - perl-ExtUtils-MakeMaker
+      - pam
+      - pam-devel
+      - readline
+      - readline-devel
+      - zlib
+      - zlib-devel
+      - openssl
+      - openssl-devel
+      - libxml2
+      - libxml2-devel
+      - libxslt
+      - libxslt-devel
+      - openldap-devel
+      - systemd-devel
+      - tcl
+      - tcl-devel
+      - python-devel
+      - krb5-devel
+    state: present
   ignore_errors: yes
-  #  when: ansible_distribution == "CentOS" and ansible_distribution_major_version == "7"
+  when: ansible_distribution_major_version | int <= 7
 
-- name: install | Ensure gcc packages are installed centos8.
-  package:
-    name: "{{ item }}"
-    state: installed
-  with_items:
-    - gcc
-    - llvm5.0
-    - llvm5.0-devel
-    - gcc-c++
-    - clang
-    - libicu-devel
-    - perl-ExtUtils-Embed
-    - readline
-    - readline-devel
-    - zlib
-    - zlib-devel
-    - openssl
-    - openssl-devel
-    - pam-devel
-    - libxml2-devel
-    - libxslt-devel
-    - openldap-devel
-    - systemd-devel
-    - tcl-devel
-    - python3-devel
-    - python3
-    - lz4
-    - lz4-devel
-    - krb5-devel
+- name: install | Ensure gcc packages are installed (EL8+, dnf).
+  dnf:
+    name:
+      - gcc
+      - gcc-c++
+      - clang
+      - libicu-devel
+      - perl-ExtUtils-Embed
+      - perl-ExtUtils-MakeMaker
+      - pam
+      - pam-devel
+      - readline
+      - readline-devel
+      - zlib
+      - zlib-devel
+      - openssl
+      - openssl-devel
+      - libxml2-devel
+      - libxslt-devel
+      - openldap-devel
+      - systemd-devel
+      - tcl-devel
+      - python3-devel
+      - python3
+      - lz4
+      - lz4-devel
+      - krb5-devel
+    state: present
   ignore_errors: yes
-  when: ansible_distribution == "CentOS" and ansible_distribution_major_version == "8"
+  when: ansible_distribution_major_version | int >= 8
