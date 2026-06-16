@@ -47,7 +47,7 @@
   shell: "export LUAJIT_INC=/data/apps/luajit2/include/luajit-2.1"
 
 - name: install | Build an install nginx.
-  shell: "{{ item }}" 
+  shell: "{{ item }}"
   with_items:
     - "{{ nginx_configure_command }}"
     - "sed -i 's/-Werror//g' /tmp/tengine-{{ nginx_version }}/objs/Makefile"
@@ -59,7 +59,11 @@
   args:
     chdir: "/tmp/tengine-{{ nginx_version }}/"
   when: not nginx_bin_result.stat.exists
-  
+  environment:
+    LIB_UTHASH: "/usr/local/src/uthash"
+    LUAJIT_LIB: "/data/apps/luajit2/lib"
+    LUAJIT_INC: "/data/apps/luajit2/include/luajit-2.1"
+
 - name: create nginx ssl dirrecotr.
   file: path={{ software_install_path }}/nginx/ssl state=directory owner={{ nginx_user }} group={{ nginx_group }}
 

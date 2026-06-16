@@ -38,4 +38,6 @@
     - bison
     - perl-FindBin
     - perl-core
+    - libsodium-devel
+    - libsodium
   ignore_errors: yes
