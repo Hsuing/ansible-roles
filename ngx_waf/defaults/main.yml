@@ -105,7 +105,7 @@ libsodium_configure_command: >
   ./configure --prefix=/usr/local/src/libsodium-build --with-pic
   {{ libsodium_build_options }}
 
-nginx_temp_path: "/var/tmp/nginx"
+nginx_temp_path: "/data/apps/nginx/temp"
 nginx_conf_path: "{{ software_install_path }}/nginx/conf/"
 nginx_conf_file_path: "{{ software_install_path }}/nginx/conf/nginx.conf"
 

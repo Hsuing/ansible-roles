@@ -1,16 +1,21 @@
 [Unit]
-Description=nginx - high performance web server
+Description=tengine - high performance web server
 Documentation=http://nginx.org/en/docs/
-After=network.target remote-fs.target nss-lookup.target
- 
+After=network.target network-online.target remote-fs.target nss-lookup.target
+Wants=network-online.target
+
 [Service]
 Type=forking
-PIDFile=/app/tengine/logs/nginx.pid
-ExecStartPre=/app/tengine/sbin/nginx -t -c /app/tengine/conf/nginx.conf
-ExecStart=/app/tengine/sbin/nginx -c /app/tengine/conf/nginx.conf
-ExecReload=/bin/kill -s HUP $MAINPID
+PIDFile=/var/run/nginx.pid
+
+Environment="LD_LIBRARY_PATH=/data/apps/luajit2/lib:$LD_LIBRARY_PATH"
+
+ExecStartPre=/data/apps/nginx/sbin/nginx -t -c /data/apps/nginx/conf/nginx.conf
+ExecStart=/data/apps/nginx/sbin/nginx -c /data/apps/nginx/conf/nginx.conf
+ExecReload=/data/apps/nginx/sbin/nginx -s reload -c /data/apps/nginx/conf/nginx.conf
 ExecStop=/bin/kill -s QUIT $MAINPID
-PrivateTmp=true
- 
+Restart=on-failure
+RestartSec=5s
+
 [Install]
 WantedBy=multi-user.target
