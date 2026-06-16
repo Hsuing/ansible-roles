@@ -87,7 +87,7 @@ libsodiumfilename: "libsodium-src.tar.gz"
 
 openssl_build_options: ''
 openssl_configure_command: >
-  ./config --prefix=/data/apps/nginx/party_modules/openssl-1.1.1a/.openssl
+  ./Configure linux-x86_64 --prefix=/data/apps/nginx/party_modules/openssl-1.1.1a/.openssl
   {{ openssl_build_options }}
 
 
@@ -167,7 +167,7 @@ nginx_configure_command: >
   --with-http_mp4_module
   --with-http_flv_module
   --with-jemalloc
-  --with-stream 
+  --with-stream
   --with-stream_ssl_module
   --with-stream_realip_module
   --with-stream_ssl_preread_module
@@ -199,7 +199,7 @@ nginx_configure_command: >
   {{ nginx_build_options }}
 
   #--add-module={{ party_modules_files_path }}/mod_dubbo
-#--with-http_geoip_module 
+#--with-http_geoip_module
 #
 nginx_pidfile: '/var/run/nginx.pid'
 nginx_worker_processes: "{{ ansible_processor_vcpus | default(ansible_processor_count) }}"

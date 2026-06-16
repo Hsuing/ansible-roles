@@ -36,4 +36,6 @@
     - gperftools
     - flex
     - bison
+    - perl-FindBin
+    - perl-core
   ignore_errors: yes
