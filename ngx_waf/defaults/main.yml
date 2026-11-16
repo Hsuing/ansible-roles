@@ -201,7 +201,7 @@ nginx_configure_command: >
   #--add-module={{ party_modules_files_path }}/mod_dubbo
 #--with-http_geoip_module
 #
-nginx_pidfile: '/var/run/nginx.pid'
+nginx_pidfile: '/run/nginx.pid'
 nginx_worker_processes: "{{ ansible_processor_vcpus | default(ansible_processor_count) }}"
 nginx_worker_connections: "65535"
 nginx_multi_accept: "on"

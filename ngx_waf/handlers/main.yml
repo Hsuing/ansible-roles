@@ -1,14 +1,19 @@
 ---
 # author: hanxiong
+- name: Reload systemd daemon.
+  systemd:
+    daemon_reload: yes
+
 - name: Configtest nginx.
-  shell: /etc/rc.d/init.d/nginx configtest
+  command: /data/apps/nginx/sbin/nginx -t -c /data/apps/nginx/conf/nginx.conf
+  changed_when: false
 
 - name: Reload nginx - after config check.
-  shell: /etc/rc.d/init.d/nginx reload
+  systemd:
+    name: nginx
+    state: reloaded
 
 - name: Reload nginx.
-  debug: msg="checking config first"
-  changed_when: True
-  notify: 
-   - Configtest nginx.
-   - Reload nginx - after config check.
+  command: /data/apps/nginx/sbin/nginx -t -c /data/apps/nginx/conf/nginx.conf
+  changed_when: false
+  notify: Reload nginx - after config check.

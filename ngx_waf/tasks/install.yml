@@ -79,5 +79,10 @@
 - name: install | Set the owner of the nginx directory.
   file: path={{ software_install_path }}/nginx state=directory owner={{ nginx_user }} group={{ nginx_group }} recurse=yes
 
-- name: install | Config environment variable.
-  lineinfile: dest=/etc/profile line='export PATH={{ software_install_path }}/nginx/sbin/:$PATH'
+- name: install | Configure nginx PATH for login shells.
+  copy:
+    dest: /etc/profile.d/nginx.sh
+    content: 'export PATH={{ software_install_path }}/nginx/sbin:$PATH\n'
+    owner: root
+    group: root
+    mode: '0644'
