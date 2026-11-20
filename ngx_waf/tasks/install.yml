@@ -82,7 +82,8 @@
 - name: install | Configure nginx PATH for login shells.
   copy:
     dest: /etc/profile.d/nginx.sh
-    content: 'export PATH={{ software_install_path }}/nginx/sbin:$PATH\n'
+    content: |
+      export PATH="{{ software_install_path }}/nginx/sbin:$PATH"
     owner: root
     group: root
     mode: '0644'

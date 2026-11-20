@@ -1,6 +1,7 @@
 ---
 # author: hanxiong
 - include: yum.yml
+- include: pcre.yml
 - include: pure_cache.yml
 - include: jemlloc.yml
 - include: lua21.yml

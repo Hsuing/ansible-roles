@@ -31,7 +31,7 @@ python `2.7.5`
 
     etcd_file: "etcd-v{{ etcd_version }}-linux-amd64.tar.gz"
     etcd_file_path: "{{ software_files_path }}/{{ etcd_file }}"
-    etcd_file_url: "https://github.com/coreos/etcd/releases/download/etcd-v{{ etcd_version }}/{{ etcd_file }}"
+    etcd_file_url: "https://github.com/etcd-io/etcd/releases/download/v{{ etcd_version }}/{{ etcd_file }}"
 
     etcd_port: 2379
     etcd_peer_port: 2380

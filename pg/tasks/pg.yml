@@ -19,11 +19,13 @@
     dest: "/tmp/"
     creates: "/tmp/postgresql-{{ name_version }}"
 
-- name: install | Build an install src/pg.
-  shell: "{{ item }}"
-  with_items:
-    - "{{ pg_configure_command }}"
-    - gmake world && gmake install-world
+- name: install | Configure PostgreSQL.
+  shell: "{{ pg_configure_command }}"
+  args:
+    chdir: "/tmp/postgresql-{{ name_version }}"
+
+- name: install | Build and install PostgreSQL.
+  shell: gmake world && gmake install-world
   args:
     chdir: "/tmp/postgresql-{{ name_version }}"
 

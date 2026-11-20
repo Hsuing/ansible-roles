@@ -32,6 +32,12 @@ jemlloc_name_path: "{{ software_files_path}}/{{ jemlloc_name }}"
 
 party_modules_files_path: "/data/apps/nginx/party_modules"
 
+pcre_version: "8.45"
+pcre_archive: "pcre-{{ pcre_version }}.tar.bz2"
+pcre_url: "https://sourceforge.net/projects/pcre/files/pcre/{{ pcre_version }}/{{ pcre_archive }}/download"
+pcre_checksum: "sha256:4dae6fdcd2bb0bb6c37b5f97c33c2be954da743985369cddac3546e3218bffb8"
+pcre_source_path: "{{ party_modules_files_path }}/pcre-{{ pcre_version }}"
+
 jemlloc_software_files_name: "jemalloc-5.2.0.tar.bz2"
 bro_name: "ngx_brotli.tar.gz"
 #ngx_devel_kit_name: "v0.3.0.tar.gz"
@@ -161,7 +167,7 @@ nginx_configure_command: >
   --without-procs
   --with-threads
   --with-file-aio
-  --with-pcre
+  --with-pcre={{ pcre_source_path }}
   --with-threads
   --with-ipv6
   --with-http_mp4_module

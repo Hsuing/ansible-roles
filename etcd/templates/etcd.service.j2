@@ -1,16 +1,15 @@
 [Unit]
-Description=Etcd Server
-After=network.target
-After=network-online.target
+Description=etcd {{ etcd_version }} ({{ etcd_service_name }})
+After=network.target network-online.target
 Wants=network-online.target
 
 [Service]
 Type=notify
 WorkingDirectory={{ etcd_datadir }}
 User={{ etcd_user }}
-TimeoutStartSec=10
-EnvironmentFile=-/data/etcd_data/2379/conf/etcd.conf
-ExecStart=/usr/local/etcd/etcd
+Group={{ etcd_user }}
+EnvironmentFile={{ etcd_confdir }}/etcd.conf
+ExecStart={{ software_install_path }}/etcd/etcd
 Restart=on-failure
 RestartSec=10s
 LimitNOFILE=65536

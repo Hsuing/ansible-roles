@@ -22,15 +22,62 @@
     src: "{{ apisix_file_path }}"
     dest: "{{ software_install_path }}/{{ apisix_dir }}"
 
+- name: Install LuaSec with the OpenResty OpenSSL headers
+  command: >-
+    luarocks install --tree=deps luasec 0.9-1
+    OPENSSL_DIR={{ openresty_openssl_dir }}
+    OPENSSL_INCDIR={{ openresty_openssl_dir }}/include
+    OPENSSL_LIBDIR={{ openresty_openssl_dir }}/lib
+  args:
+    chdir: "{{ software_install_path }}/{{ apisix_dir }}"
+
+- name: Install LuaRocks Luke build backend globally
+  command: "luarocks install luarocks-build-luke 0.3.2-1"
+
+- name: Install archived LuaLDAP rock directly
+  command: >-
+    luarocks install --tree=deps
+    https://luarocks.org/manifests/fperrad/lualdap-1.2.6-1.src.rock
+  args:
+    chdir: "{{ software_install_path }}/{{ apisix_dir }}"
+
 - name: Build an install apisix_src.
   shell: "make deps"
   args:
     chdir: "{{ software_install_path}}/apisix2.15"
+  environment:
+    OPENSSL_DIR: "{{ openresty_openssl_dir }}"
+    OPENSSL_INCDIR: "{{ openresty_openssl_dir }}/include"
+    OPENSSL_LIBDIR: "{{ openresty_openssl_dir }}/lib"
 
 - name: make init apisix_src.
   shell: "make init"
   args:
     chdir: "{{ software_install_path}}/apisix2.15"
+
+- name: Configure APISIX etcd endpoint
+  blockinfile:
+    path: "{{ software_install_path }}/{{ apisix_dir }}/conf/config.yaml"
+    insertafter: EOF
+    marker: "# {mark} ANSIBLE MANAGED APISIX ETCD CONFIG"
+    block: |
+      etcd:
+        host:
+          - "{{ apisix_etcd_host }}"
+        prefix: "{{ apisix_etcd_prefix }}"
+        timeout: {{ apisix_etcd_timeout }}
+
+- name: Set ownership of APISIX runtime directories
+  file:
+    path: "{{ software_install_path }}/{{ apisix_dir }}/{{ item }}"
+    state: directory
+    owner: "{{ apisix_user }}"
+    group: "{{ apisix_group }}"
+    recurse: true
+  loop:
+    - conf
+    - logs
+    - run
 
 - block: 
   - name: configure | Setup systemd apisix service.
@@ -39,7 +86,11 @@
       mode: 0644
       src: apisix.service.j2
   - name: "configure | Ensure apisix is running for centos7."
-    systemd: "name=apisix state=started enabled=true"
+    systemd:
+      name: apisix
+      state: started
+      enabled: true
+      daemon_reload: true
     ignore_errors: true
   when: ansible_distribution == "CentOS" and ansible_distribution_major_version == "7"
 
@@ -50,7 +101,11 @@
       mode: 0644
       src: apisix.service.j2
   - name: "configure | Ensure apisix is running for centos8."
-    systemd: "name=apisix state=started enabled=true"
+    systemd:
+      name: apisix
+      state: started
+      enabled: true
+      daemon_reload: true
     ignore_errors: true
   when: ansible_distribution == "CentOS" and ansible_distribution_major_version == "8"
 
@@ -61,7 +116,11 @@
       mode: 0644
       src: apisix.service.j2
   - name: "configure | Ensure apisix is running for Amazon2."
-    systemd: "name=apisix state=started enabled=true"
+    systemd:
+      name: apisix
+      state: started
+      enabled: true
+      daemon_reload: true
     ignore_errors: true
   when: ansible_distribution == "Amazon" and ansible_distribution_major_version == "2"
 

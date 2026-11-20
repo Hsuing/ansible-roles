@@ -1,62 +1,46 @@
 ---
-# author: hanxiong
-
-- name: configure | Create etcd Directory.
-  file: path={{ item }} state=directory owner={{ etcd_user }} group={{ etcd_user }}
-  with_items:
-   - "{{ etcd_datadir }}"
-   - "{{ etcd_wardir }}"
-   - "{{ etcd_confdir }}"
-
-- name: configure | Setup etcd.conf file.
-  template:
-    dest: "{{ etcd_confdir }}/etcd.conf"
-    mode: 0644
-    src: etcd.conf.j2
+- name: Create etcd data and configuration directories
+  file:
+    path: "{{ item }}"
+    state: directory
     owner: "{{ etcd_user }}"
     group: "{{ etcd_user }}"
+    mode: "0750"
+  loop:
+    - "{{ etcd_datadir }}"
+    - "{{ etcd_wardir }}"
+    - "{{ etcd_confdir }}"
 
-- block: 
-  - name: configure | Setup systemd etcd service.
-    template:
-      dest: "/usr/lib/systemd/system/{{ etcd_service_name }}.service"
-      mode: 0644
-      src: etcd.service.j2
-  - name: "configure | Ensure {{ etcd_service_name }} is running for centos7."
-    systemd: "name={{ etcd_service_name }} state=started enabled=true"
-    ignore_errors: true
-  - name: "configure | Wait {{ etcd_port }} port is opening."
-    wait_for: port={{ etcd_port }}
-  when: ansible_distribution == "CentOS" and ansible_distribution_major_version == "7"
+- name: Install etcd environment configuration
+  template:
+    src: etcd.conf.j2
+    dest: "{{ etcd_confdir }}/etcd.conf"
+    owner: root
+    group: "{{ etcd_user }}"
+    mode: "0640"
+  notify: Restart etcd
 
-- block: 
-  - name: configure | Setup systemd etcd service.
-    template:
-      dest: "/usr/lib/systemd/system/{{ etcd_service_name }}.service"
-      mode: 0644
-      src: etcd.service.j2
-  - name: "configure | Ensure {{ etcd_service_name }} is running for centos8."
-    systemd: "name={{ etcd_service_name }} state=started enabled=true"
-    ignore_errors: true
-  - name: "configure | Wait {{ etcd_port }} port is opening."
-    wait_for: port={{ etcd_port }}
-  when: ansible_distribution == "CentOS" and ansible_distribution_major_version == "8"
+- name: Install etcd systemd service
+  template:
+    src: etcd.service.j2
+    dest: "/etc/systemd/system/{{ etcd_service_name }}.service"
+    owner: root
+    group: root
+    mode: "0644"
+  notify: Restart etcd
 
-- block: 
-  - name: configure | Setup systemd etcd service.
-    template:
-      dest: "/usr/lib/systemd/system/{{ etcd_service_name }}.service"
-      mode: 0644
-      src: etcd.service.j2
-  - name: "configure | Ensure {{ etcd_service_name }} is running for Amazon2."
-    systemd: "name={{ etcd_service_name }} state=started enabled=true"
-    ignore_errors: true
-  - name: "configure | Wait {{ etcd_port }} port is opening."
-    wait_for: port={{ etcd_port }}
-  when: ansible_distribution == "Amazon" and ansible_distribution_major_version == "2"
+- name: Flush etcd restart handlers
+  meta: flush_handlers
 
-- name: configure | Change the initial cluster state to already exist.
-  replace:
-    path: "{{ etcd_confdir }}/etcd.conf"
-    regexp: "initial-cluster-state: 'new'"
-    replace: "initial-cluster-state: 'existing'"
+- name: Enable and start etcd
+  systemd:
+    name: "{{ etcd_service_name }}"
+    daemon_reload: true
+    enabled: true
+    state: started
+
+- name: Wait for etcd client port
+  wait_for:
+    host: "{{ etcd_listen_client_urls | regex_replace('^https?://([^:/]+).*$', '\\1') }}"
+    port: "{{ etcd_port }}"
+    timeout: 60

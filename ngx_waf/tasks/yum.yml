@@ -13,8 +13,6 @@
     - zlib-devel
     - openssl
     - openssl-devel
-    - pcre
-    - pcre-devel
     - bzip2
     - perl
     - curl

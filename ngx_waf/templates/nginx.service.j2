@@ -3,6 +3,8 @@ Description=nginx - high performance web server
 Documentation=http://nginx.org/en/docs/
 After=network-online.target remote-fs.target nss-lookup.target
 Wants=network-online.target
+StartLimitIntervalSec=60
+StartLimitBurst=5
 [Service]
 Type=forking
 PIDFile=/run/nginx.pid
@@ -14,8 +16,7 @@ ExecStop=/data/apps/nginx/sbin/nginx -s quit
 
 Restart=on-failure
 RestartSec=5s
-StartLimitIntervalSec=60
-StartLimitBurst=5
+
 
 TimeoutStartSec=30
 TimeoutStopSec=60

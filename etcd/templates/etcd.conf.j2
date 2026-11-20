@@ -1,13 +1,25 @@
-ETCD_NAME=default
-ETCD_DATA_DIR="/data/etcd_data"
-ETCD_WAL_DIR="/data/etcd_data/wal"
-ETCD_LISTEN_CLIENT_URLS="http://0.0.0.0:2379"
-ETCD_ADVERTISE_CLIENT_URLS="http://0.0.0.0:2379"
-ETCD_AUTO_COMPACTION_RETENTION="1"
-ETCD_AUTO_COMPACTION_MODE=periodic
-ETCD_MAX_SNAPSHOTS="5"
-ETCD_MAX_WALS="5"
-ETCD_SNAPSHOT_COUNT="50000"
-ETCD_HEARTBEAT_INTERVAL="100"
-ETCD_ELECTION_TIMEOUT="1000"
-ETCD_MAX_REQUEST_BYTES="10485760"
+ETCD_NAME="{{ etcd_name }}"
+ETCD_DATA_DIR="{{ etcd_datadir }}"
+ETCD_WAL_DIR="{{ etcd_wardir }}"
+ETCD_LISTEN_PEER_URLS="{{ etcd_listen_peer_urls }}"
+ETCD_INITIAL_ADVERTISE_PEER_URLS="{{ etcd_initial_advertise_peer_urls }}"
+ETCD_LISTEN_CLIENT_URLS="{{ etcd_listen_client_urls }}"
+ETCD_ADVERTISE_CLIENT_URLS="{{ etcd_advertise_client_urls }}"
+ETCD_INITIAL_CLUSTER_STATE="{{ etcd_initial_cluster_state }}"
+ETCD_INITIAL_CLUSTER_TOKEN="{{ etcd_initial_cluster_token }}"
+{% if etcd_initial_cluster %}
+ETCD_INITIAL_CLUSTER="{{ etcd_initial_cluster }}"
+{% else %}
+ETCD_INITIAL_CLUSTER="{{ etcd_name }}={{ etcd_initial_advertise_peer_urls }}"
+{% endif %}
+{% if etcd_discovery %}
+ETCD_DISCOVERY="{{ etcd_discovery }}"
+{% endif %}
+ETCD_AUTO_COMPACTION_RETENTION="{{ etcd_auto_compaction_retention }}"
+ETCD_AUTO_COMPACTION_MODE="{{ etcd_auto_compaction_mode }}"
+ETCD_MAX_SNAPSHOTS="{{ etcd_max_snapshots }}"
+ETCD_MAX_WALS="{{ etcd_max_wals }}"
+ETCD_SNAPSHOT_COUNT="{{ etcd_snapshot_count }}"
+ETCD_HEARTBEAT_INTERVAL="{{ etcd_heartbeat_interval }}"
+ETCD_ELECTION_TIMEOUT="{{ etcd_election_timeout }}"
+ETCD_MAX_REQUEST_BYTES="{{ etcd_max_request_bytes }}"

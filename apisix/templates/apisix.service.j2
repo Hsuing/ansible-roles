@@ -5,7 +5,9 @@ After=network-online.target
 
 [Service]
 Type=forking
-WorkingDirectory=/data/apps/apisix2.15
+User={{ apisix_user }}
+Group={{ apisix_group }}
+WorkingDirectory={{ software_install_path }}/{{ apisix_dir }}
 ExecStart=/data/apps/apisix2.15/bin/apisix start
 ExecStop=/data/apps/apisix2.15/bin/apisix stop
 ExecReload=/data/apps/apisix2.15/bin/apisix reload

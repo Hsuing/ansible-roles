@@ -14,6 +14,11 @@ apisix_file: "apache-apisix-{{ apisix_version }}-src.tgz"
 apisix_file_path: "{{ software_files_path }}/{{ apisix_file }}"
 apisix_file_url: "https://dlcdn.apache.org/apisix/{{ apisix_version }}/apache-apisix-{{ apisix_version }}-src.tgz"
 
+openresty_openssl_dir: "/usr/local/openresty/openssl111"
+
+apisix_etcd_host: "{{ etcd_advertise_client_urls | default('http://127.0.0.1:2379') }}"
+apisix_etcd_prefix: "/apisix"
+apisix_etcd_timeout: 30
 
 luarocks_version: "v3.8.0"
 luarocks_file: "{{ luarocks_version }}.tar.gz"
