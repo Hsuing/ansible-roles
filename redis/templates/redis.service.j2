@@ -5,18 +5,15 @@ After=network.target
 
 [Service]
 Type=simple
-ExecStart={{ software_install_path }}/redis/bin/redis-server {{ redis_data_path }}/{{ redis_port }}/redis.conf
-ExecStop={{ software_install_path }}/redis/bin/redis-cli -a "{{ redis_requirepass }}" -p {{ redis_port }} shutdown
-PIDFile={{ redis_pidfile }}
-User=redis
-Group=redis
+ExecStart={{ software_install_path }}/redis/bin/redis-server {{ redis_dir_path }}/redis.conf --daemonize no
+KillSignal=SIGTERM
+User={{ redis_user }}
+Group={{ redis_user }}
 LimitNOFILE=65536
 LimitNPROC=65536
 TimeoutStartSec=0
 Restart=always
-RestartSec=10s  # Wait 10 seconds before restarting
-StartLimitIntervalSec=500  # Allow 500 seconds for multiple attempts
-StartLimitBurst=0
+RestartSec=10s
 TasksMax=infinity
 OOMScoreAdjust=-999
 

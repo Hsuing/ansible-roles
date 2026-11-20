@@ -16,7 +16,20 @@
   shell: "chown -R {{ pg_user }}.{{ pg_group}} /data/pgdata && chown -R {{ pg_user }}.{{ pg_group}} {{ pg_software_install_path }}"
 
 - name: init pg data.
-  shell: "/usr/bin/su - {{ pg_user }} -c 'initdb -D /data/pgdata/data -U postgres --locale=en_US.UTF8 -E UTF8 '"
+  become: true
+  become_user: "{{ pg_user }}"
+  become_method: su
+  command:
+    argv:
+      - "{{ pg_software_install_path }}/bin/initdb"
+      - -D
+      - /data/pgdata/data
+      - -U
+      - postgres
+      - --locale=en_US.UTF8
+      - -E
+      - UTF8
+    creates: /data/pgdata/data/PG_VERSION
 
 - name: configure | Setup postgresql.conf file.
   template:

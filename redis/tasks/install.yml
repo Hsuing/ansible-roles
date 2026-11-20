@@ -11,8 +11,12 @@
   connection: local
   when: not redis_file_result.stat.exists
   
+# Download on the Ansible controller; an existing redis_file_path skips this step.
 - name: install | Download redis file.
-  get_url: url={{ redis_file_url }} dest={{ software_files_path }}
+  get_url:
+    url: "{{ redis_file_url }}"
+    dest: "{{ redis_file_path }}"
+    timeout: 60
   connection: local
   when: not redis_file_result.stat.exists
 

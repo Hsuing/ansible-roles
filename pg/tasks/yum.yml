@@ -16,6 +16,7 @@
       - libicu-devel
       - perl-ExtUtils-Embed
       - perl-ExtUtils-MakeMaker
+      - perl-Opcode
       - pam
       - pam-devel
       - readline
@@ -60,6 +61,7 @@
       - libicu-devel
       - perl-ExtUtils-Embed
       - perl-ExtUtils-MakeMaker
+      - perl-Opcode
       - pam
       - pam-devel
       - readline

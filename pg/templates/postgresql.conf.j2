@@ -64,7 +64,7 @@ archive_mode = on
 archive_timeout = 60s
 archive_command = 'test ! -f /data/pgdata/archivedir/%f && cp %p /data/pgdata/archivedir/%f'
 restore_command='cp /data/pgdata/archivedir/%f %p'
-recovery_target_timeline='latest
+recovery_target_timeline='latest'
 
 wal_keep_size = 65536
 wal_sender_timeout = 60s
@@ -84,7 +84,7 @@ autovacuum_vacuum_cost_limit = 4000
 wal_level = hot_standby
 #hot_standby = on
 max_wal_senders = 20
-wal_keep_segments = 64
+#wal_keep_size = '1GB'
 
 ################ sync #####################
 synchronous_commit = on

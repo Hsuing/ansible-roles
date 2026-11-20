@@ -28,7 +28,7 @@ pg_configure_command: >
   --with-gssapi
   --with-icu
   --with-openssl
-  --with-pam 
+  --with-pam
   --with-ldap
   --with-systemd
   --with-libxml
